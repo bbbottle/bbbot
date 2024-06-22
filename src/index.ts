@@ -1,4 +1,4 @@
-import { Bot } from "./bbbot";
+import { Bot } from "./bot/bbbot";
 
 
 // Enable graceful stop

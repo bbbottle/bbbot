@@ -1,5 +1,8 @@
 import {Telegraf} from "telegraf";
 import * as dotenv from "dotenv";
+
+import {content as manual} from "../manual";
+
 dotenv.config();
 
 class BBBot {
@@ -14,7 +17,7 @@ class BBBot {
 
   private Init() {
     this.bot.start((ctx) => ctx.reply('Welcome'));
-    this.bot.help((ctx) => ctx.reply('Send me a sticker'));
+    this.bot.help((ctx) => ctx.reply(manual));
     this.bot.hears('hi', (ctx) => ctx.reply('Hey.'));
     return this.Launch();
   }
