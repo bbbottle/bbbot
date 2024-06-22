@@ -25,20 +25,21 @@ class BBBot {
 
     this.bot.hears('纸巾盒', (ctx) => ctx.reply('小乌鸦'));
 
-    this.TellAdmin(`Bot ${this.GetVersion()} Initialized.`);
+    this.TellAdmin(this.InitSuccessMessage());
 
     return this.Launch();
   }
 
-  private GetVersion() {
-    return new FmtString(pkgJson.version, [{
+  private InitSuccessMessage() {
+    const originMessage = `Bot ${pkgJson.version} Initialized.`
+    return new FmtString(originMessage, [{
       type: 'bold',
-      offset: 0,
+      offset: 4,
       length: pkgJson.version.length,
     }]);
   }
 
-  private TellAdmin(msg: string) {
+  private TellAdmin(msg: FmtString<string>) {
     this.bot.telegram.sendMessage(process.env.ADMIN_ID as string, msg).then(this.Noop).catch(console.error);
   }
 
