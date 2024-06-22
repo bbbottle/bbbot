@@ -15,7 +15,7 @@ class BBBot {
   private Init() {
     this.bot.start((ctx) => ctx.reply('Welcome'));
     this.bot.help((ctx) => ctx.reply('Send me a sticker'));
-    this.bot.hears('hi', (ctx) => ctx.reply('Hey there'));
+    this.bot.hears('hi', (ctx) => ctx.reply('Hey.'));
     return this.Launch();
   }
 
