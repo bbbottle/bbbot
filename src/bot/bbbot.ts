@@ -1,5 +1,6 @@
 import {Telegraf} from "telegraf";
 import * as dotenv from "dotenv";
+import {FmtString} from "telegraf/format";
 import {content as manual} from "./manual";
 
 // @ts-ignore
@@ -30,7 +31,11 @@ class BBBot {
   }
 
   private GetVersion() {
-    return `v${pkgJson.version}`;
+    return new FmtString(pkgJson.version, [{
+      type: 'bold',
+      offset: 0,
+      length: pkgJson.version.length,
+    }]);
   }
 
   private TellAdmin(msg: string) {
