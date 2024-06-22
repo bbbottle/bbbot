@@ -21,7 +21,7 @@ class BBBot {
     this.bot.start((ctx) => ctx.reply('Welcome'));
     this.bot.help((ctx) => ctx.reply(manual));
     this.bot.hears('纸巾盒', (ctx) => ctx.reply('小乌鸦'));
-    this.bot.command('/cid', (ctx) => ctx.reply(ctx.chat.id));
+    this.bot.command('/cid', (ctx) => ctx.reply("id" + ctx.chat.id));
     return this.Launch();
   }
 
