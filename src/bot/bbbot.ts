@@ -12,13 +12,15 @@ class BBBot {
 
   constructor() {
     this.bot = new Telegraf(process.env.BOT_TOKEN as string);
-    this.Init().then(() => console.log('Bot started'));
+    this.Init().then(() => {
+    });
   }
 
   private Init() {
     this.bot.start((ctx) => ctx.reply('Welcome'));
     this.bot.help((ctx) => ctx.reply(manual));
     this.bot.hears('hi', (ctx) => ctx.reply('Hey.'));
+    this.bot.hears('纸巾盒', (ctx) => ctx.reply('小乌鸦'));
     return this.Launch();
   }
 
