@@ -2,7 +2,7 @@ import {Telegraf} from "telegraf";
 import {message} from "telegraf/filters";
 import * as dotenv from "dotenv";
 
-import { MsgMidWareList } from "./midware";
+import { MsgMiddleware } from "./middleware";
 import {FmtString} from "telegraf/format";
 import {MsgHelper} from "./utils/MsgHelper";
 
@@ -19,7 +19,7 @@ class BBBot {
   }
 
   private Init() {
-    this.bot.on(message(), ...MsgMidWareList);
+    this.bot.on(message(), ...MsgMiddleware);
 
     this.TellAdmin(MsgHelper.GetInitSuccessMessage());
 
