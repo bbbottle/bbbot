@@ -20,8 +20,8 @@ class BBBot {
   private Init() {
     this.bot.start((ctx) => ctx.reply('Welcome'));
     this.bot.help((ctx) => ctx.reply(manual));
-    this.bot.hears('hi', (ctx) => ctx.reply('Hey.'));
     this.bot.hears('纸巾盒', (ctx) => ctx.reply('小乌鸦'));
+    this.bot.command('/cid', (ctx) => ctx.reply(ctx.chat.id));
     return this.Launch();
   }
 
