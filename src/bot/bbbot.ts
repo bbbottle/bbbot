@@ -1,7 +1,9 @@
 import {Telegraf} from "telegraf";
 import * as dotenv from "dotenv";
-
 import {content as manual} from "./manual";
+
+// @ts-ignore
+import pkgJson from "../../package.json";
 
 dotenv.config();
 
@@ -12,18 +14,30 @@ class BBBot {
 
   constructor() {
     this.bot = new Telegraf(process.env.BOT_TOKEN as string);
-    this.Init().then(() => {
-      return this.bot.telegram.sendMessage(process.env.ADMIN_ID as string, 'Bot started');
-    });
+    this.Init().then(this.Noop);
   }
 
   private Init() {
     this.bot.start((ctx) => ctx.reply('Welcome'));
+
     this.bot.help((ctx) => ctx.reply(manual));
-    this.bot.hears('纸巾盒', (ctx) => ctx.reply('小乌鸦' + ctx.chat.id));
-    this.bot.command('/cid', (ctx) => ctx.reply("id" + ctx.chat.id));
+
+    this.bot.hears('纸巾盒', (ctx) => ctx.reply('小乌鸦'));
+
+    this.TellAdmin(`Bot ${this.GetVersion()} Initialized.`);
+
     return this.Launch();
   }
+
+  private GetVersion() {
+    return `v${pkgJson.version}`;
+  }
+
+  private TellAdmin(msg: string) {
+    this.bot.telegram.sendMessage(process.env.ADMIN_ID as string, msg).then(this.Noop).catch(console.error);
+  }
+
+  private Noop() {}
 
   private Launch() {
     return this.bot.launch();
