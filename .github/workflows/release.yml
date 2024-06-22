@@ -1,0 +1,21 @@
+name: Release
+
+on:
+  workflow_call:
+  push:
+    branches:
+      - main
+
+jobs:
+  restart_service:
+    name: restart bbbot
+    runs-on: ubuntu-latest
+    steps:
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: restartBBBot.sh
