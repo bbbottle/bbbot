@@ -1,10 +1,10 @@
 import {Telegraf} from "telegraf";
+import {message} from "telegraf/filters";
 import * as dotenv from "dotenv";
-import {FmtString} from "telegraf/format";
-import {content as manual} from "./manual";
 
-// @ts-ignore
-import pkgJson from "../../package.json";
+import { MsgMidWareList } from "./midware";
+import {FmtString} from "telegraf/format";
+import {MsgHelper} from "./utils/MsgHelper";
 
 dotenv.config();
 
@@ -19,24 +19,11 @@ class BBBot {
   }
 
   private Init() {
-    this.bot.start((ctx) => ctx.reply('Welcome'));
+    this.bot.on(message(), ...MsgMidWareList);
 
-    this.bot.help((ctx) => ctx.reply(manual));
+    this.TellAdmin(MsgHelper.GetInitSuccessMessage());
 
-    this.bot.hears('纸巾盒', (ctx) => ctx.reply('小乌鸦'));
-
-    this.TellAdmin(this.InitSuccessMessage());
-
-    return this.Launch();
-  }
-
-  private InitSuccessMessage() {
-    const originMessage = `Bot ${pkgJson.version} Initialized.`
-    return new FmtString(originMessage, [{
-      type: 'bold',
-      offset: 4,
-      length: pkgJson.version.length,
-    }]);
+    return this.bot.launch();
   }
 
   private TellAdmin(msg: FmtString<string>) {
@@ -44,10 +31,6 @@ class BBBot {
   }
 
   private Noop() {}
-
-  private Launch() {
-    return this.bot.launch();
-  }
 
   static GetInstance() {
     if (!BBBot.instance) {

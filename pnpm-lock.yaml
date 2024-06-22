@@ -16,6 +16,9 @@ dependencies:
     version: 4.16.3
 
 devDependencies:
+  '@telegraf/types':
+    specifier: ^7.1.0
+    version: 7.1.0
   ts-node:
     specifier: ^10.9.2
     version: 10.9.2(@types/node@20.14.8)(typescript@5.5.2)
@@ -50,7 +53,6 @@ packages:
 
   /@telegraf/types@7.1.0:
     resolution: {integrity: sha512-kGevOIbpMcIlCDeorKGpwZmdH7kHbqlk/Yj6dEpJMKEQw5lk0KVQY0OLXaCswy8GqlIVLd5625OB+rAntP9xVw==}
-    dev: false
 
   /@tsconfig/node10@1.0.11:
     resolution: {integrity: sha512-DcRjDCujK/kCk/cUe8Xz8ZSpm8mS3mNNpta+jGCA6USEDfktlNvm1+IuZ9eTcDbNk41BHwpHHeW+N1lKCz4zOw==}
