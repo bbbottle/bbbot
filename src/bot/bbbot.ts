@@ -1,7 +1,7 @@
 import {Telegraf} from "telegraf";
 import * as dotenv from "dotenv";
 
-import {content as manual} from "../manual";
+import {content as manual} from "./manual";
 
 dotenv.config();
 
