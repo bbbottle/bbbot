@@ -13,6 +13,7 @@ class BBBot {
   constructor() {
     this.bot = new Telegraf(process.env.BOT_TOKEN as string);
     this.Init().then(() => {
+      return this.bot.telegram.sendMessage(process.env.ADMIN_ID as string, 'Bot started');
     });
   }
 
