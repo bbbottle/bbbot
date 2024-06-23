@@ -1,36 +1,21 @@
-import {Telegraf} from "telegraf";
+import {Middleware, Telegraf} from "telegraf";
 import {message} from "telegraf/filters";
-import * as dotenv from "dotenv";
+import {BBContext} from "./context";
 
-import { MsgMiddleware } from "./middleware";
-import {FmtString} from "telegraf/format";
+import {Login, MsgMiddleware} from "./middlewares";
 import {MsgHelper} from "./utils/MsgHelper";
-
-dotenv.config();
+import {Commands} from "./commands";
+import {FmtString} from "telegraf/format";
 
 class BBBot {
-  bot: Telegraf;
+  bot: Telegraf<BBContext>;
 
   private static instance: BBBot;
 
   constructor() {
-    this.bot = new Telegraf(process.env.BOT_TOKEN as string);
+    this.bot = new Telegraf<BBContext>(process.env.BOT_TOKEN as string);
     this.Init().then(this.Noop);
   }
-
-  private Init() {
-    this.bot.on(message(), ...MsgMiddleware);
-
-    this.TellAdmin(MsgHelper.GetInitSuccessMessage());
-
-    return this.bot.launch();
-  }
-
-  private TellAdmin(msg: FmtString<string>) {
-    this.bot.telegram.sendMessage(process.env.ADMIN_ID as string, msg).then(this.Noop).catch(console.error);
-  }
-
-  private Noop() {}
 
   static GetInstance() {
     if (!BBBot.instance) {
@@ -40,7 +25,36 @@ class BBBot {
     return BBBot.instance;
   }
 
-  Stop(sigint: string) {
+  public config() {
+    process.once('SIGINT', () => Bot.Stop('SIGINT'));
+    process.once('SIGTERM', () => Bot.Stop('SIGTERM'))
+  }
+
+
+  private Init() {
+    this.bot.on(message(), ...MsgMiddleware);
+
+    this.bot.start(Login);
+
+    Commands.forEach(c => {
+      this.bot.command(c.command, c.handler);
+    });
+
+    this.bot.hears("hi", (ctx) => ctx.reply("Hey there!"));
+
+    this.TellAdmin(MsgHelper.GetInitSuccessMessage());
+
+    return this.bot.launch();
+  }
+
+  private TellAdmin(msg: FmtString<string>) {
+    console.log(msg.text);
+    this.bot.telegram.sendMessage(process.env.ADMIN_ID as string, msg).then(this.Noop).catch(console.error);
+  }
+
+  private Noop() {}
+
+  private  Stop(sigint: string) {
     this.bot.stop(sigint);
   }
 }

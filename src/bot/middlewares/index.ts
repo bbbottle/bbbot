@@ -1,7 +1,10 @@
 import { CreatePost } from "./post";
-import {Context, Middleware} from "telegraf";
+import {MiddlewareFn} from "telegraf";
 import {NonemptyReadonlyArray} from "telegraf/typings/core/helpers/util";
+import {BBContext} from "../context";
 
 export const MsgMiddleware = [
   CreatePost,
-] as NonemptyReadonlyArray<Middleware<Context>>
+] as NonemptyReadonlyArray<MiddlewareFn<BBContext>>
+
+export * from "./login";

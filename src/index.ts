@@ -1,6 +1,9 @@
+import * as Dotenv from "dotenv";
+Dotenv.config({ path: `.${process.env.NODE_ENV}.env` });
+
+import {Network} from "./bot/utils/Network";
+Network.config();
+
 import { Bot } from "./bot/bbbot";
+Bot.config();
 
-
-// Enable graceful stop
-process.once('SIGINT', () => Bot.Stop('SIGINT'));
-process.once('SIGTERM', () => Bot.Stop('SIGTERM'))
