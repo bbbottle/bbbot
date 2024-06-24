@@ -19,7 +19,6 @@ export const Login: Middleware<BBContext> = async(ctx) => {
         }
 
         const data = res.data;
-        db.SetSess(data.session);
 
         ctx.Session = data.session;
         ctx.User = data.user;
