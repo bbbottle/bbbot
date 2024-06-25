@@ -1,6 +1,7 @@
 import {BBCmd} from "./types";
-import {BBContext} from "../context";
 import {DataBase} from "../utils/DataBase";
+import {Context, Middleware} from "telegraf";
+import * as tt from "telegraf/src/telegram-types";
 
 export class LoginCommand implements BBCmd {
   command: string;
@@ -10,7 +11,7 @@ export class LoginCommand implements BBCmd {
     this.description = "login https://bbki.ng with GitHub OAuth App";
   }
 
-  handler = (ctx: BBContext) => {
+  handler: Middleware<Context & tt.CommandContextExtn> = (ctx) => {
     DataBase.getInstance()
       .SignIn()
       .then((res) => {

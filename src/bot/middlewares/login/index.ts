@@ -1,8 +1,12 @@
 import {DataBase} from "../../utils/DataBase";
-import {BBContext} from "../../context";
-import {Middleware} from "telegraf";
+import {Context, Middleware} from "telegraf";
+import * as tt from "telegraf/src/telegram-types";
 
-export const Login: Middleware<BBContext> = async(ctx) => {
+interface StartContextExtn extends tt.CommandContextExtn {
+  payload: string
+}
+
+export const Login: Middleware<StartContextExtn & Context> = async(ctx) => {
     if (ctx.payload == "") {
       return ctx.reply("Welcome.")
     }
@@ -19,9 +23,6 @@ export const Login: Middleware<BBContext> = async(ctx) => {
         }
 
         const data = res.data;
-
-        ctx.Session = data.session;
-        ctx.User = data.user;
 
         ctx.reply("Hi, " + data.user.email);
       })
