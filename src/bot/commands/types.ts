@@ -1,8 +1,9 @@
 import {BotCommand} from "@telegraf/types";
-import {Context, Middleware} from "telegraf";
+import {Middleware} from "telegraf";
 import * as tt from "telegraf/src/telegram-types";
+import {BBContext} from "../context";
 
 
 export interface BBCmd extends BotCommand {
-  handler: Middleware<Context & tt.CommandContextExtn>
+  handler: Middleware<BBContext & tt.CommandContextExtn>
 }

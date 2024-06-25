@@ -1,19 +1,22 @@
 import {DataBase} from "../../utils/DataBase";
 import {Context, Middleware} from "telegraf";
 import * as tt from "telegraf/src/telegram-types";
+import {BBContext} from "../../context";
 
 interface StartContextExtn extends tt.CommandContextExtn {
   payload: string
 }
 
-export const Login: Middleware<StartContextExtn & Context> = async(ctx) => {
+export const Login: Middleware<StartContextExtn & BBContext> = async(ctx) => {
     if (ctx.payload == "") {
       return ctx.reply("Welcome.")
     }
 
     const db = DataBase.getInstance();
 
-    db
+    console.log("code", ctx.payload)
+
+    return db
       .ExchangeCode(ctx.payload)
       .then((res) => {
         if (res.error) {
@@ -24,10 +27,13 @@ export const Login: Middleware<StartContextExtn & Context> = async(ctx) => {
 
         const data = res.data;
 
-        ctx.reply("Hi, " + data.user.email);
+        ctx.session.SupabaseSession = data.session;
+        ctx.session.SupabaseUser = data.user;
+
+        return ctx.reply("Hi, " + data.user.email);
       })
       .catch((e) => {
         console.error(e.message);
-        ctx.reply("Hi.")
+        return ctx.reply("Hi.")
       })
 }

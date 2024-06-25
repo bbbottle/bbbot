@@ -1,18 +1,19 @@
-import {Composer, Context, Telegraf} from "telegraf";
+import {Composer, Context, Middleware, session, Telegraf} from "telegraf";
 
-import {Login, MsgMiddleware} from "./middlewares";
+import {Login, MsgMiddleware, SessionMiddleware} from "./middlewares";
 import {MsgHelper} from "./utils/MsgHelper";
 import {Commands} from "./commands";
 import {FmtString} from "telegraf/format";
+import {BBContext} from "./context";
 
 
 class BBBot {
-  bot: Telegraf;
+  bot: Telegraf<BBContext>;
 
   private static instance: BBBot;
 
   constructor() {
-    this.bot = new Telegraf(process.env.BOT_TOKEN as string);
+    this.bot = new Telegraf<BBContext>(process.env.BOT_TOKEN as string);
     this.Init().then(this.Noop);
   }
 
@@ -30,6 +31,7 @@ class BBBot {
   }
 
   private Init() {
+    this.bot.use(SessionMiddleware as Middleware<BBContext>)
     this.bot.start(Login);
 
     Commands.forEach(c => {
