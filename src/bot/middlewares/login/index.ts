@@ -1,5 +1,5 @@
 import {DataBase} from "../../utils/DataBase";
-import {Context, Middleware} from "telegraf";
+import {Composer, Middleware} from "telegraf";
 import * as tt from "telegraf/src/telegram-types";
 import {BBContext} from "../../context";
 
@@ -30,6 +30,8 @@ export const Login: Middleware<StartContextExtn & BBContext> = async(ctx) => {
         ctx.session.SupabaseSession = data.session;
         ctx.session.SupabaseUser = data.user;
 
+        DataBase.getInstance().SetSess(data.session);
+
         return ctx.reply("Hi, " + data.user.email);
       })
       .catch((e) => {
@@ -37,3 +39,7 @@ export const Login: Middleware<StartContextExtn & BBContext> = async(ctx) => {
         return ctx.reply("Hi.")
       })
 }
+const Anonymous: (t: BBContext) => boolean = ctx => !ctx.session.SupabaseSession || !ctx.session.SupabaseUser;
+
+export const LoginRequired = Composer.drop<BBContext>(Anonymous);
+

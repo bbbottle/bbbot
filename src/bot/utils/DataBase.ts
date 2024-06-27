@@ -43,6 +43,13 @@ export class DataBase {
     });
   }
 
+  public async CreatePost(title: string, body: string) {
+    return this.supabase.from("post").upsert({
+      title: title,
+      content: body,
+    });
+  }
+
   public async ExchangeCode(code: string) {
     return await this.supabase.auth.exchangeCodeForSession(code);
   }

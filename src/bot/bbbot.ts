@@ -1,6 +1,6 @@
-import {Composer, Context, Middleware, session, Telegraf} from "telegraf";
+import {Composer, Context, Middleware, MiddlewareFn, session, Telegraf} from "telegraf";
 
-import {Login, MsgMiddleware, SessionMiddleware} from "./middlewares";
+import {Login, TextMsgMiddleware, SessionMiddleware} from "./middlewares";
 import {MsgHelper} from "./utils/MsgHelper";
 import {Commands} from "./commands";
 import {FmtString} from "telegraf/format";
@@ -38,7 +38,9 @@ class BBBot {
       this.bot.command(c.command, c.handler);
     });
 
-    this.bot.on("message", ...MsgMiddleware);
+    const notText= (ctx: BBContext) => !(ctx.message && "text" in ctx.message);
+
+    this.bot.use(Composer.drop(notText), ...TextMsgMiddleware);
 
     this.bot.hears("hi", (ctx) => ctx.reply("Hey there!"));
 
