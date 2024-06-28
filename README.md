@@ -1,1 +1,1 @@
-a telegram [bot](https://t.me/BBKingsBot)
+a [bot](https://t.me/BBKingsBot)
