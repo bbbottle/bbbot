@@ -36,9 +36,11 @@ class BBBot {
       SessionMiddleware as Middleware<BBContext>,
       LoginRequired,
       (ctx) => {
-        return DataBase.getInstance().SetSess(ctx.session.SupabaseSession)
+        await DataBase.getInstance().SetSess(ctx.session.SupabaseSession)
+        next();
       }
-    )
+    );
+
     this.bot.start(Login);
 
     Commands.forEach(c => {
