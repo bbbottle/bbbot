@@ -1,4 +1,4 @@
-import {createClient, Session, SupabaseClient} from "@supabase/supabase-js";
+import {createClient, Session, SupabaseClient, User} from "@supabase/supabase-js";
 import * as process from "process";
 import {MsgHelper} from "./MsgHelper";
 
@@ -37,7 +37,10 @@ export class DataBase {
     })
   }
 
-  public SetSess(s: Session) {
+  public SetSess(s: Session | undefined) {
+    if (!s) {
+      return;
+    }
     return this.supabase.auth.setSession({
       access_token: s.access_token,
       refresh_token: s.refresh_token
