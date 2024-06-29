@@ -1,5 +1,6 @@
 import {createClient, Session, SupabaseClient} from "@supabase/supabase-js";
 import * as process from "process";
+import {MsgHelper} from "./MsgHelper";
 
 enum OauthProvider {
   GITHUB = "github",
@@ -46,7 +47,7 @@ export class DataBase {
   public async CreatePost(title: string, body: string) {
     return this.supabase.from("post").upsert({
       title: title,
-      content: body,
+      content: MsgHelper.Md2Html(body),
     });
   }
 

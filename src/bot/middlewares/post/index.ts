@@ -1,7 +1,7 @@
 import {Composer, Middleware} from "telegraf";
 import {BBContext} from "../../context";
 import {DataBase} from "../../utils/DataBase";
-import {LoginRequired} from "../login";
+import {AdminRequired, LoginRequired} from "../login";
 
 const Post:Middleware<BBContext> = async (ctx, next) => {
   if(!ctx.message) {
@@ -19,7 +19,6 @@ const Post:Middleware<BBContext> = async (ctx, next) => {
   const lines = ctx.message.text.split("\n");
   const title = lines[0];
   const body = lines.slice(1).join("\n");
-  await ctx.reply("Creating post...")
 
   const res = await DataBase.getInstance().CreatePost(title, body);
   console.log(res);
@@ -27,7 +26,7 @@ const Post:Middleware<BBContext> = async (ctx, next) => {
     return ctx.reply(res.error.message);
   }
 
-  return ctx.reply("Post created successfully! https://bbki.ng/blog/" + title)
+  return ctx.reply("Post is ready: https://bbki.ng/blog/" + title)
 }
 
-export const CreatePost = Composer.compose([LoginRequired, Post])
+export const CreatePost = Composer.optional(AdminRequired, Post)

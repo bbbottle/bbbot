@@ -41,5 +41,14 @@ export const Login: Middleware<StartContextExtn & BBContext> = async(ctx) => {
 }
 const Anonymous: (t: BBContext) => boolean = ctx => !ctx.session.SupabaseSession || !ctx.session.SupabaseUser;
 
+export const AdminRequired: (t: BBContext) => boolean = ctx => {
+  if (Anonymous(ctx)) {
+    return false;
+  }
+
+  return !!(ctx.session.SupabaseUser && ctx.session.SupabaseUser.id === process.env.SUPABASE_ADMIN_ID as string);
+}
+
 export const LoginRequired = Composer.drop<BBContext>(Anonymous);
+
 

@@ -18,11 +18,13 @@
     "dotenv": "^16.4.5",
     "kysely": "^0.27.3",
     "pg": "^8.12.0",
+    "showdown": "^2.1.0",
     "telegraf": "^4.16.3"
   },
   "devDependencies": {
     "@telegraf/types": "^7.1.0",
     "@types/pg": "^8.11.6",
+    "@types/showdown": "^2.0.6",
     "cross-env": "^7.0.3",
     "global-agent": "^3.0.0",
     "ts-node": "^10.9.2",
