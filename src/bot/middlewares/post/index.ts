@@ -17,6 +17,11 @@ const Post:Middleware<BBContext> = async (ctx, next) => {
   }
 
   const lines = ctx.message.text.split("\n");
+  if (lines.length < 2) {
+    return next();
+  }
+
+
   const title = lines[0];
   const body = lines.slice(1).join("\n");
 
