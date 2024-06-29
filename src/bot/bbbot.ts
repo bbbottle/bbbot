@@ -35,11 +35,10 @@ class BBBot {
     this.bot.use(
       SessionMiddleware as Middleware<BBContext>,
       LoginRequired,
-      (ctx) => {
+      async (ctx) => {
         await DataBase.getInstance().SetSess(ctx.session.SupabaseSession)
-        next();
-      }
-    );
+        return next();
+      });
 
     this.bot.start(Login);
 
