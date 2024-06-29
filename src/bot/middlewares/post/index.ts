@@ -1,7 +1,7 @@
 import {Composer, Middleware} from "telegraf";
 import {BBContext} from "../../context";
 import {DataBase} from "../../utils/DataBase";
-import {AdminRequired, LoginRequired} from "../login";
+import {AdminRequired} from "../login";
 
 const Post:Middleware<BBContext> = async (ctx, next) => {
   if(!ctx.message) {

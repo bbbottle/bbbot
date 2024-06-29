@@ -1,11 +1,10 @@
 import {Composer, Context, Middleware, MiddlewareFn, session, Telegraf} from "telegraf";
 
-import {Login, TextMsgMiddleware, SessionMiddleware, LoginRequired} from "./middlewares";
+import {Login, TextMsgMiddleware, SessionMiddleware, SessionRestore} from "./middlewares";
 import {MsgHelper} from "./utils/MsgHelper";
 import {Commands} from "./commands";
 import {FmtString} from "telegraf/format";
 import {BBContext} from "./context";
-import {DataBase} from "./utils/DataBase";
 
 
 class BBBot {
@@ -34,11 +33,8 @@ class BBBot {
   private Init() {
     this.bot.use(
       SessionMiddleware as Middleware<BBContext>,
-      LoginRequired,
-      async (ctx, next) => {
-        await DataBase.getInstance().SetSess(ctx.session.SupabaseSession)
-        return next();
-      });
+      SessionRestore as Middleware<BBContext>,
+    );
 
     this.bot.start(Login);
 
