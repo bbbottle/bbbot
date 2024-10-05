@@ -31,7 +31,12 @@ class BBBot {
   }
 
   private Init() {
-    this.bot.use(session());
+    this.bot.use(session({
+      defaultSession: () => ({
+        SupabaseSession: null,
+        SupabaseUser: null,
+      })
+    }));
 
     this.bot.start(Login);
 
