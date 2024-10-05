@@ -9,8 +9,7 @@ export interface BBSession {
   SupabaseUser?: User,
 }
 
-export const SessionMiddleware = session<BBSession, BBContext, "session">({
-});
+export const SessionMiddleware = session<BBSession, BBContext, "session">();
 
 export const SessionRestore = Composer.optional(HasLogin, async (ctx, next) => {
   await DataBase.getInstance().SetSess(ctx.session.SupabaseSession)
