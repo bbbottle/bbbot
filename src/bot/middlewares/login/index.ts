@@ -21,7 +21,7 @@ export const Login: Middleware<StartContextExtn & BBContext> = async(ctx) => {
       .then((res) => {
         if (res.error) {
           console.error(res.error)
-          ctx.reply("Hi.")
+          ctx.reply("Login Failed. " + res.error)
           return;
         }
 
@@ -36,7 +36,7 @@ export const Login: Middleware<StartContextExtn & BBContext> = async(ctx) => {
       })
       .catch((e) => {
         console.error(e.message);
-        return ctx.reply("Hi.")
+        return ctx.reply("Login Failed. " + e.message);
       })
 }
 const Anonymous: (t: BBContext) => boolean = ctx => !ctx.session?.SupabaseSession || !ctx.session?.SupabaseUser;
