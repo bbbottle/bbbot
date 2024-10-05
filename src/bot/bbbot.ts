@@ -31,10 +31,7 @@ class BBBot {
   }
 
   private Init() {
-    this.bot.use(
-      SessionMiddleware as Middleware<BBContext>,
-      SessionRestore as Middleware<BBContext>,
-    );
+    this.bot.use(session());
 
     this.bot.start(Login);
 
