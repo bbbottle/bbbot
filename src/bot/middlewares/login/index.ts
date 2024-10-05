@@ -39,7 +39,7 @@ export const Login: Middleware<StartContextExtn & BBContext> = async(ctx) => {
         return ctx.reply("Hi.")
       })
 }
-const Anonymous: (t: BBContext) => boolean = ctx => !ctx.session.SupabaseSession || !ctx.session.SupabaseUser;
+const Anonymous: (t: BBContext) => boolean = ctx => !ctx.session?.SupabaseSession || !ctx.session?.SupabaseUser;
 
 export const HasLogin: (t: BBContext) => boolean = ctx => !Anonymous(ctx);
 
