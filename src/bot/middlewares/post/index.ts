@@ -2,6 +2,7 @@ import {Composer, Middleware} from "telegraf";
 import {BBContext} from "../../context";
 import {DataBase} from "../../utils/DataBase";
 import {AdminRequired} from "../login";
+import {MsgConst} from "../../consts/MsgConst";
 
 const Post:Middleware<BBContext> = async (ctx, next) => {
   if(!ctx.message) {
@@ -13,7 +14,7 @@ const Post:Middleware<BBContext> = async (ctx, next) => {
   }
 
   if (!ctx.session.SupabaseSession) {
-    return ctx.reply("You need to login to create a post");
+    return ctx.reply(MsgConst.LoginTips);
   }
 
   const lines = ctx.message.text.split("\n");
@@ -34,11 +35,11 @@ const Post:Middleware<BBContext> = async (ctx, next) => {
   // delete incoming message
   try {
     await ctx.telegram.deleteMessage(ctx.chat?.id as number, ctx.message.message_id);
-  } catch (e) {
-    await ctx.reply(e.message);
+  } catch {
+    await ctx.reply(MsgConst.DeleteMsgFailed);
   }
 
-  return ctx.reply("Post is ready: https://bbki.ng/blog/" + title)
+  return ctx.reply(MsgConst.PostLinkPrefix + title)
 }
 
 export const CreatePost = Composer.optional(AdminRequired, Post)
