@@ -7,7 +7,7 @@ export class Logout implements BBCmd {
   description: string;
   constructor() {
     this.command = "logout";
-    this.description = "logout from https://bbki.ng";
+    this.description = "Logout from https://bbki.ng";
   }
 
   handler = async (ctx: BBContext & tt.CommandContextExtn) => {

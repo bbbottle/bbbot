@@ -5,7 +5,7 @@ export class Avatar implements BBCmd {
   description: string;
   constructor() {
     this.command = "avatar";
-    this.description = "Get the avatar of bbki.ng";
+    this.description = "Get bbki.ng's logo";
   }
 
   handler = (ctx: CmdContext) => {

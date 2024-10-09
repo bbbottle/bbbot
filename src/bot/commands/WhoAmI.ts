@@ -8,7 +8,7 @@ export class WhoAmI implements BBCmd {
 
   constructor() {
     this.command = "whoami";
-    this.description = "Show your email address.";
+    this.description = "Get user's email.";
   }
 
   handler: Middleware<BBContext> = async (ctx, next) => {

@@ -10,7 +10,7 @@ export class LoginCommand implements BBCmd {
   description: string;
   constructor() {
     this.command = "login";
-    this.description = "login https://bbki.ng with GitHub OAuth App";
+    this.description = "Login to https://bbki.ng";
   }
 
   handler: Middleware<Context & tt.CommandContextExtn> = (ctx) => {

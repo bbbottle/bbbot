@@ -6,7 +6,7 @@ export class Help implements BBCmd {
   description: string;
   constructor() {
     this.command = "help";
-    this.description = "Get all commands name and description";
+    this.description = "Get all commands' description";
   }
 
   handler = (ctx: CmdContext) => {
