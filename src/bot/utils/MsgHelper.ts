@@ -34,6 +34,6 @@ export class MsgHelper {
   }
 
   public static GetCommandsDescription() {
-    return Commands.map(c => `/${c.command} - ${c.description}`).join("\n");
+    return Commands.map(c => `${c.command} - ${c.description}`).join("\n");
   }
 }
