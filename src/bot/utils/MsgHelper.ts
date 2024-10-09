@@ -5,6 +5,7 @@ import pkgJson from "../../../package.json";
 
 import showdown from "showdown";
 import {Markup} from "telegraf";
+import {Commands} from "../commands";
 showdown.setFlavor('github');
 const converter = new showdown.Converter();
 
@@ -30,5 +31,9 @@ export class MsgHelper {
     return Markup.inlineKeyboard([
       Markup.button.url(text, url)
     ])
+  }
+
+  public static GetCommandsDescription() {
+    return Commands.map(c => `/${c.command} - ${c.description}`).join("\n");
   }
 }
