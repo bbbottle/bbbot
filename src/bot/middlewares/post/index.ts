@@ -31,6 +31,13 @@ const Post:Middleware<BBContext> = async (ctx, next) => {
     return ctx.reply(res.error.message);
   }
 
+  // delete incoming message
+  try {
+    await ctx.telegram.deleteMessage(ctx.chat?.id as number, ctx.message.message_id);
+  } catch (e) {
+    await ctx.reply(e.message);
+  }
+
   return ctx.reply("Post is ready: https://bbki.ng/blog/" + title)
 }
 
