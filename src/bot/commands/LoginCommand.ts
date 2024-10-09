@@ -2,6 +2,8 @@ import {BBCmd} from "./types";
 import {DataBase} from "../utils/DataBase";
 import {Context, Middleware} from "telegraf";
 import * as tt from "telegraf/src/telegram-types";
+import {MsgHelper} from "../utils/MsgHelper";
+import {MsgConst} from "../consts/MsgConst";
 
 export class LoginCommand implements BBCmd {
   command: string;
@@ -20,7 +22,7 @@ export class LoginCommand implements BBCmd {
           return;
         }
 
-        return ctx.reply(res.data.url);
+        return ctx.reply(MsgConst.LoginMethods, MsgHelper.UrlBtn("Github", res.data.url));
       }).catch(console.error);
   };
 }

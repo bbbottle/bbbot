@@ -4,6 +4,7 @@ import {FmtString} from "telegraf/format";
 import pkgJson from "../../../package.json";
 
 import showdown from "showdown";
+import {Markup} from "telegraf";
 showdown.setFlavor('github');
 const converter = new showdown.Converter();
 
@@ -23,5 +24,11 @@ export class MsgHelper {
 
   public static Md2Html(msg: string) {
     return converter.makeHtml(msg);
+  }
+
+  public static UrlBtn(text: string ,url: string) {
+    return Markup.inlineKeyboard([
+      Markup.button.url(text, url)
+    ])
   }
 }
