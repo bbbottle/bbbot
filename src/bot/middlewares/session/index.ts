@@ -1,9 +1,10 @@
-import {Composer, session } from "telegraf";
+import {Composer, Scenes, session} from "telegraf";
 import {Session, User } from "@supabase/supabase-js";
 import {HasLogin} from "../login";
 import {DataBase} from "../../utils/DataBase";
+import {updateMovieSession} from "../../stage/updateMovieScene";
 
-export interface BBSession {
+export interface BBSession extends Scenes.WizardSession<updateMovieSession> {
   SupabaseSession?: Session,
   SupabaseUser?: User,
 }

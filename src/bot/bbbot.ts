@@ -5,6 +5,8 @@ import {MsgHelper} from "./utils/MsgHelper";
 import {Commands} from "./commands";
 import {FmtString} from "telegraf/format";
 import {BBContext} from "./context";
+import {stage} from "./stage";
+import {UpdateMovieListSceneId} from "./stage/updateMovieScene";
 
 
 class BBBot {
@@ -48,7 +50,12 @@ class BBBot {
 
     this.bot.use(Composer.drop(notText), ...TextMsgMiddleware);
 
-    this.bot.hears("hi", (ctx) => ctx.reply("Hey there!"));
+    this.bot.use(stage.middleware());
+
+    this.bot.hears("now", (ctx) => {
+      // enter updateMovieScene
+      ctx.scene.enter(UpdateMovieListSceneId);
+    })
 
     this.TellAdmin(MsgHelper.GetInitSuccessMessage());
 

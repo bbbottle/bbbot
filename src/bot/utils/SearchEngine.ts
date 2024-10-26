@@ -44,7 +44,6 @@ export class SearchEngine {
             return "";
         }
 
-        console.log(JSON.stringify(res.data.items, null, 2));
         return this.extractFirstResult(res);
     }
 }

@@ -54,6 +54,14 @@ export class DataBase {
     });
   }
 
+  public async UpdateMovieList(name: string, link: string) {
+    return this.supabase.from("movie").upsert({
+      name,
+      link,
+      visible: 1,
+    });
+  }
+
   public async ExchangeCode(code: string) {
     return await this.supabase.auth.exchangeCodeForSession(code);
   }
