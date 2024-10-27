@@ -23,17 +23,18 @@ confirmStepHandler.command("cancel", async ctx => {
 confirmStepHandler.command("publish", Composer.optional(AdminRequired, async ctx => {
 
   try {
-    // const res = await DataBase.getInstance().UpdateMovieList(
-    //   ctx.scene.session.movieName, ctx.scene.session.movieUrl
-    // );
-    //
-    // if (res.error) {
-    //   await ctx.reply("failed.");
-    //   await ctx.reply(res.error.message);
-    //   return ctx.scene.leave();
-    // }
+    const res = await DataBase.getInstance().UpdateMovieList(
+      ctx.scene.session.movieName, ctx.scene.session.movieUrl
+    );
+
+    if (res.error) {
+      await ctx.reply("failed.");
+      await ctx.reply(res.error.message);
+      return ctx.scene.leave();
+    }
 
   } catch (e) {
+    await ctx.reply(e.message);
     await ctx.reply("failed.");
     return ctx.scene.leave();
   }
