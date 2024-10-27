@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node build/bbbot.js",
+    "start": "cross-env NODE_ENV=prod node build/bbbot.js",
     "release": "cross-env NODE_ENV=prod && node build/build.mjs",
     "dev": "cross-env NODE_ENV=dev ts-node src/index.ts",
     "dev-local": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 GLOBAL_AGENT_HTTPS_PROXY=http://127.0.0.1:7891 NODE_ENV=dev ts-node src/index.ts"
