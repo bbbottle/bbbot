@@ -58,6 +58,7 @@ export class DataBase {
     return this.supabase.from("movie").upsert({
       name,
       link,
+      status: "看过",
       visible: 1,
     });
   }
