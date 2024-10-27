@@ -52,8 +52,7 @@ class BBBot {
 
     this.bot.use(stage.middleware());
 
-    this.bot.hears("now", (ctx) => {
-      // enter updateMovieScene
+    this.bot.hears("now", (ctx, next) => {
       ctx.scene.enter(UpdateMovieListSceneId);
     })
 
