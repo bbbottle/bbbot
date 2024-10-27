@@ -75,6 +75,7 @@ export const UpdateMovieListScene = new Scenes.WizardScene<updateMovieContext>(
       await ctx.reply("/publish or /cancel?")
       await ctx.telegram.deleteMessage(ctx.chat?.id as number, res.message_id);
     } catch (e) {
+      await ctx.reply(e.message);
       await ctx.reply('search engine error');
       return ctx.scene.leave();
     }
