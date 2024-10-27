@@ -1,4 +1,3 @@
 .idea
 *.env
-./build/bbbot.js
 node_modules
