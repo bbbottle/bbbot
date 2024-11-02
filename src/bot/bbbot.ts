@@ -52,10 +52,6 @@ class BBBot {
 
     this.bot.use(stage.middleware());
 
-    this.bot.hears("now", (ctx, next) => {
-      ctx.scene.enter(UpdateMovieListSceneId);
-    })
-
     this.TellAdmin(MsgHelper.GetInitSuccessMessage());
 
     return this.bot.launch();

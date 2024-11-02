@@ -7,6 +7,8 @@ const options = {
   platform: 'node',
   bundle: true,
   define: GetDefineObj(),
+  treeShaking: true,
+  minify: true,
 }
 
 esbuild.build(options).catch(() => process.exit(1))
