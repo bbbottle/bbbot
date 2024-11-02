@@ -33,7 +33,7 @@ confirmStepHandler.command("publish", Composer.optional(AdminRequired, async ctx
       return ctx.scene.leave();
     }
 
-  } catch (e) {
+  } catch (e: any) {
     await ctx.reply(e.message);
     await ctx.reply("failed.");
     return ctx.scene.leave();
@@ -75,7 +75,7 @@ export const UpdateMovieListScene = new Scenes.WizardScene<updateMovieContext>(
       ctx.wizard.next();
       await ctx.reply("/publish or /cancel?")
       await ctx.telegram.deleteMessage(ctx.chat?.id as number, res.message_id);
-    } catch (e) {
+    } catch (e: any) {
       await ctx.reply(e.message);
       await ctx.reply('search engine error');
       return ctx.scene.leave();

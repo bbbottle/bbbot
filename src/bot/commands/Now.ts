@@ -1,4 +1,4 @@
-import {BBCmd} from "./types";
+import {BBCmd, CmdContext} from "./types";
 import {UpdateMovieListSceneId} from "../stage/updateMovieScene";
 
 export class Now implements BBCmd {
@@ -11,7 +11,7 @@ export class Now implements BBCmd {
 
   }
 
-  async handler(ctx) {
-    ctx.scene.enter(UpdateMovieListSceneId);
+  async handler(ctx: CmdContext) {
+    return ctx.scene.enter(UpdateMovieListSceneId);
   }
 }
