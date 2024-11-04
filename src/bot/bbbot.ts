@@ -40,9 +40,9 @@ class BBBot {
       })
     }));
 
-    this.bot.use(stage.middleware());
-
     this.bot.start(Login);
+
+    this.bot.use(stage.middleware());
 
     Commands.forEach(c => {
       this.bot.command(c.command, c.handler);
