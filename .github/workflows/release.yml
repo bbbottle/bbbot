@@ -47,30 +47,27 @@ jobs:
         uses: easingthemes/ssh-deploy@main
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          ARGS: "-rlgoDzvc -i"
+          ARGS: "-rlgoDzvc -I"
           SOURCE: "build/bbbot.js"
           REMOTE_HOST: ${{ secrets.HOST }}
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: ${{ secrets.TARGET }}
           EXCLUDE: "/dist/, /node_modules/"
           SCRIPT_BEFORE: |
-            whoami
-            ls -al
+            echo "before"
           SCRIPT_AFTER: |
-            whoami
-            ls -al
-            echo $RSYNC_STDOUT
+            restartBBBot.sh
 
-  restart_service:
-    name: restart bbbot
-    needs: build_and_deploy
-    runs-on: ubuntu-latest
-    steps:
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
-          script: ~/bin/restartBBBot.sh
+#  restart_service:
+#    name: restart bbbot
+#    needs: build_and_deploy
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: executing remote ssh commands using password
+#        uses: appleboy/ssh-action@v1.0.3
+#        with:
+#          host: ${{ secrets.HOST }}
+#          username: ${{ secrets.USERNAME }}
+#          password: ${{ secrets.PASSWORD }}
+#          port: ${{ secrets.PORT }}
+#          script: ~/bin/restartBBBot.sh
