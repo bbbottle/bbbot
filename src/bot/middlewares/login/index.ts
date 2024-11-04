@@ -48,6 +48,6 @@ export const AdminRequired: (t: BBContext) => boolean = ctx => {
     return false;
   }
 
-  return !!(ctx.session.SupabaseUser && ctx.session.SupabaseUser.id === process.env.SUPABASE_ADMIN_ID as string);
+  return !!(ctx.session.SupabaseUser && ctx.session.SupabaseUser.email === process.env.ADMIN_EMAIL as string);
 }
 
