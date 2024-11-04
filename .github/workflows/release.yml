@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  build and deploy:
+  build_and_deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -50,7 +50,7 @@ jobs:
             ls -al
             echo $RSYNC_STDOUT
 
-  restart service:
+  restart_service:
     name: restart bbbot
     runs-on: ubuntu-latest
     steps:
