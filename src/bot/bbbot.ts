@@ -1,6 +1,6 @@
 import {Composer, Context, Middleware, MiddlewareFn, session, Telegraf} from "telegraf";
 
-import {Login, AdminRequired} from "./middlewares";
+import {Login, AdminRequired, LoginTips} from "./middlewares";
 import {MsgHelper} from "./utils/MsgHelper";
 import {Commands} from "./commands";
 import {FmtString} from "telegraf/format";
@@ -55,7 +55,7 @@ class BBBot {
     this.bot.use(stage.middleware());
     Commands.forEach(c => {
       const handler = c.needAdmin
-        ? Composer.optional(AdminRequired, c.handler)
+        ? Composer.branch(AdminRequired, c.handler, LoginTips)
         : c.handler;
 
       this.bot.command(c.command, handler);

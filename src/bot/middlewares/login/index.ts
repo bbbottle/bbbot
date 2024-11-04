@@ -43,14 +43,18 @@ const Anonymous: (t: BBContext) => boolean = ctx => !ctx.session?.SupabaseSessio
 
 export const HasLogin: (t: BBContext) => boolean = ctx => !Anonymous(ctx);
 
+export const LoginTips = async (t: BBContext) => {
+  return t.reply("Please /login first.");
+}
+
 export const AdminRequired: (t: BBContext) => boolean = ctx => {
   if (Anonymous(ctx)) {
     return false;
   }
 
-  const isAdmin = !!(ctx.session.SupabaseUser && ctx.session.SupabaseUser.id === process.env.SUPABASE_ADMIN_ID as string);
+  const isAdmin = !!(ctx.session.SupabaseUser && ctx.session.SupabaseUser.email === process.env.ADMIN_EMAIL as string);
   if (!isAdmin) {
-    console.log(ctx.session.SupabaseUser.id, process.env.SUPABASE_ADMIN_ID)
+    console.log(ctx.session.SupabaseUser.email, process.env.ADMIN_EMAIL)
     return false;
   }
 
