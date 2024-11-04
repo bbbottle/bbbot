@@ -20,8 +20,7 @@ confirmStepHandler.command("cancel", async ctx => {
   return ctx.scene.leave();
 });
 
-confirmStepHandler.command("publish", Composer.optional(AdminRequired, async ctx => {
-
+confirmStepHandler.command("publish", async ctx => {
   try {
     const res = await DataBase.getInstance().UpdateMovieList(
       ctx.scene.session.movieName, ctx.scene.session.movieUrl
@@ -40,9 +39,6 @@ confirmStepHandler.command("publish", Composer.optional(AdminRequired, async ctx
   }
 
   await ctx.reply("https://bbki.ng/now updated.");
-  return ctx.scene.leave();
-}), async (ctx) => {
-  await ctx.reply(`/login first.`);
   return ctx.scene.leave();
 });
 
