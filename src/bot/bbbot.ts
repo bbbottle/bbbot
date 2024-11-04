@@ -1,12 +1,12 @@
 import {Composer, Context, Middleware, MiddlewareFn, session, Telegraf} from "telegraf";
 
-import {Login, TextMsgMiddleware, SessionMiddleware, SessionRestore} from "./middlewares";
+import {Login, AdminRequired} from "./middlewares";
 import {MsgHelper} from "./utils/MsgHelper";
 import {Commands} from "./commands";
 import {FmtString} from "telegraf/format";
 import {BBContext} from "./context";
 import {stage} from "./stage";
-import {UpdateMovieListSceneId} from "./stage/updateMovieScene";
+import {CreatePost, CreateTextPost} from "./middlewares/post";
 
 
 class BBBot {
@@ -42,20 +42,24 @@ class BBBot {
 
     this.bot.start(Login);
 
-    this.bot.use(stage.middleware());
+    this.InitCommands();
 
-    Commands.forEach(c => {
-      this.bot.command(c.command, c.handler);
-    });
-
-    const notText= (ctx: BBContext) => !(ctx.message && "text" in ctx.message);
-
-    this.bot.use(Composer.drop(notText), ...TextMsgMiddleware);
-
+    this.bot.use(CreateTextPost);
 
     this.TellAdmin(MsgHelper.GetInitSuccessMessage());
 
     return this.bot.launch();
+  }
+
+  private InitCommands() {
+    this.bot.use(stage.middleware());
+    Commands.forEach(c => {
+      const handler = c.needAdmin
+        ? Composer.optional(AdminRequired, c.handler)
+        : c.handler;
+
+      this.bot.command(c.command, handler);
+    });
   }
 
   private TellAdmin(msg: FmtString<string>) {

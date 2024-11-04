@@ -7,4 +7,5 @@ export type CmdContext = tt.CommandContextExtn & BBContext;
 
 export interface BBCmd extends BotCommand {
   handler: Middleware<CmdContext>
+  needAdmin?: boolean
 }

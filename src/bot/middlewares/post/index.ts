@@ -43,3 +43,7 @@ const Post:Middleware<BBContext> = async (ctx, next) => {
 }
 
 export const CreatePost = Composer.optional(AdminRequired, Post)
+
+const notText= (ctx: BBContext) => !(ctx.message && "text" in ctx.message);
+
+export const CreateTextPost = Composer.compose([Composer.drop(notText), CreatePost]);
