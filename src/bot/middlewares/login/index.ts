@@ -48,6 +48,8 @@ export const AdminRequired: (t: BBContext) => boolean = ctx => {
     return false;
   }
 
+  console.log(ctx.session.SupabaseUser.email, process.env.ADMIN_EMAIL)
+
   return !!(ctx.session.SupabaseUser && ctx.session.SupabaseUser.email === process.env.ADMIN_EMAIL as string);
 }
 
