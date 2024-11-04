@@ -11,7 +11,7 @@ const converter = new showdown.Converter();
 
 export class MsgHelper {
   public static GetInitSuccessMessage(format?: boolean) {
-    const originMessage = `Bot ${pkgJson.version} Initialized.`
+    const originMessage = `Bot ${pkgJson.version} is ready.`
 
     const entities= [{
       type: 'bold',
