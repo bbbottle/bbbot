@@ -52,6 +52,7 @@ jobs:
 
   restart_service:
     name: restart bbbot
+    needs: build_and_deploy
     runs-on: ubuntu-latest
     steps:
       - name: executing remote ssh commands using password
