@@ -54,7 +54,8 @@ export const AdminRequired: (t: BBContext) => boolean = ctx => {
 
   const isAdmin = !!(ctx.session.SupabaseUser && ctx.session.SupabaseUser.email === process.env.ADMIN_EMAIL as string);
   if (!isAdmin) {
-    console.log(ctx.session.SupabaseUser.email, process.env.ADMIN_EMAIL)
+    console.log("email", ctx.session.SupabaseUser.email)
+    console.log("required email", process.env.ADMIN_EMAIL)
     return false;
   }
 
