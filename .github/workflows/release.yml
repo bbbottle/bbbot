@@ -56,7 +56,7 @@ jobs:
           SCRIPT_BEFORE: |
             echo "before"
           SCRIPT_AFTER: |
-            restartBBBot.sh
+            ~/bin/restartBBBot.sh
 
 #  restart_service:
 #    name: restart bbbot
