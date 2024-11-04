@@ -40,6 +40,8 @@ class BBBot {
       })
     }));
 
+    this.bot.use(stage.middleware());
+
     this.bot.start(Login);
 
     Commands.forEach(c => {
@@ -50,7 +52,6 @@ class BBBot {
 
     this.bot.use(Composer.drop(notText), ...TextMsgMiddleware);
 
-    this.bot.use(stage.middleware());
 
     this.TellAdmin(MsgHelper.GetInitSuccessMessage());
 
