@@ -1,7 +1,7 @@
 import {FmtString} from "telegraf/format";
 
 // @ts-ignore
-import pkgJson from "../../../package.json";
+import pkgJson from "../../package.json";
 
 import showdown from "showdown";
 import {Markup} from "telegraf";
