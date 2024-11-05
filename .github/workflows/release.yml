@@ -51,8 +51,8 @@ jobs:
       - name: Deploy to server
         uses: easingthemes/ssh-deploy@main
         env:
-          PROJECT_ROOT: {{ secrets.PROJECT_ROOT }}
-          TARGET: {{ secrets.TARGET }}
+          PROJECT_ROOT: ${{ secrets.PROJECT_ROOT }}
+          TARGET: ${{ secrets.TARGET }}
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           ARGS: "-rlgoDzvc --delete"
