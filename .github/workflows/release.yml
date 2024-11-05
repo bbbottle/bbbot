@@ -43,7 +43,7 @@ jobs:
           echo "SITE_URL=${{ secrets.SITE_URL }}" >> .prod.env
           echo "GOOGLE_SEARCH_API_KEY=${{ secrets.GOOGLE_SEARCH_API_KEY }}" >> .prod.env
           echo "GOOGLE_SEARCH_ENGINE_ID=${{ secrets.GOOGLE_SEARCH_ENGINE_ID }}" >> .prod.env
-          cp .prod.env build/.env
+          cp .prod.env build/env.prod
 
       - name: Build
         run: pnpm release
