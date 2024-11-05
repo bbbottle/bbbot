@@ -5,6 +5,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'src/**'
+      - 'build/**'
+      - '.github/workflows/**'
 
 jobs:
   build_and_deploy:
@@ -39,6 +43,7 @@ jobs:
           echo "SITE_URL=${{ secrets.SITE_URL }}" >> .prod.env
           echo "GOOGLE_SEARCH_API_KEY=${{ secrets.GOOGLE_SEARCH_API_KEY }}" >> .prod.env
           echo "GOOGLE_SEARCH_ENGINE_ID=${{ secrets.GOOGLE_SEARCH_ENGINE_ID }}" >> .prod.env
+          cp .prod.env build/.env
 
       - name: Build
         run: pnpm release
@@ -48,7 +53,7 @@ jobs:
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           ARGS: "-rlgoDzvc --delete"
-          SOURCE: "build/bbbot.js"
+          SOURCE: "build"
           REMOTE_HOST: ${{ secrets.HOST }}
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: ${{ secrets.TARGET }}
@@ -56,4 +61,5 @@ jobs:
           SCRIPT_BEFORE: |
             echo "before"
           SCRIPT_AFTER: |
+            cp {{ secrets.TARGET }}/build/.env {{ secrets.PROJECT_ROOT }}/.env
             ~/bin/restartBBBot.sh
