@@ -50,6 +50,9 @@ jobs:
 
       - name: Deploy to server
         uses: easingthemes/ssh-deploy@main
+        env:
+          PROJECT_ROOT: {{ secrets.PROJECT_ROOT }}
+          TARGET: {{ secrets.TARGET }}
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           ARGS: "-rlgoDzvc --delete"
@@ -61,5 +64,5 @@ jobs:
           SCRIPT_BEFORE: |
             echo "before"
           SCRIPT_AFTER: |
-            cp {{ secrets.TARGET }}/build/.env {{ secrets.PROJECT_ROOT }}/.env
+            cp "$env:TARGET/.env" "$env:PROJECT_ROOT/.env"
             ~/bin/restartBBBot.sh
