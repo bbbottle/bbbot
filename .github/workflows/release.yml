@@ -64,5 +64,5 @@ jobs:
           SCRIPT_BEFORE: |
             echo "before"
           SCRIPT_AFTER: |
-            cp "$env:TARGET/.env" "$env:PROJECT_ROOT/.env"
+            cp "$TARGET/.env" "$PROJECT_ROOT/.env"
             ~/bin/restartBBBot.sh
