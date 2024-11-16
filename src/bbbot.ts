@@ -1,6 +1,6 @@
 import {Composer, Context, Middleware, MiddlewareFn, session, Telegraf} from "telegraf";
 
-import {Login, AdminRequired, LoginTips} from "./middlewares";
+import {Login, AdminRequired, LoginTips, PSessionMiddleware, SessionRestore} from "./middlewares";
 import {MsgHelper} from "./utils/MsgHelper";
 import {Commands} from "./commands";
 import {FmtString} from "telegraf/format";
@@ -33,12 +33,7 @@ class BBBot {
   }
 
   private Init() {
-    this.bot.use(session({
-      defaultSession: () => ({
-        SupabaseSession: undefined,
-        SupabaseUser: undefined,
-      })
-    }));
+    this.bot.use(PSessionMiddleware, SessionRestore);
 
     this.bot.start(Login);
 

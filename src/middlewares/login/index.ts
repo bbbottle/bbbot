@@ -1,5 +1,5 @@
 import {DataBase} from "../../utils/DataBase";
-import {Composer, Middleware} from "telegraf";
+import {Middleware} from "telegraf";
 import * as tt from "telegraf/src/telegram-types";
 import {BBContext} from "../../context";
 
@@ -52,13 +52,6 @@ export const AdminRequired: (t: BBContext) => boolean = ctx => {
     return false;
   }
 
-  const isAdmin = !!(ctx.session.SupabaseUser && ctx.session.SupabaseUser.email === process.env.ADMIN_EMAIL as string);
-  if (!isAdmin) {
-    console.log("email", ctx.session.SupabaseUser.email)
-    console.log("required email", process.env.ADMIN_EMAIL)
-    return false;
-  }
-
-  return true;
+  return !!(ctx.session.SupabaseUser && ctx.session.SupabaseUser.email === process.env.ADMIN_EMAIL as string);
 }
 
