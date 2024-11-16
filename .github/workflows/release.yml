@@ -43,6 +43,11 @@ jobs:
           echo "SITE_URL=${{ secrets.SITE_URL }}" >> .prod.env
           echo "GOOGLE_SEARCH_API_KEY=${{ secrets.GOOGLE_SEARCH_API_KEY }}" >> .prod.env
           echo "GOOGLE_SEARCH_ENGINE_ID=${{ secrets.GOOGLE_SEARCH_ENGINE_ID }}" >> .prod.env
+          echo "PSQL_HOST=${{ secrets.PSQL_HOST }}" >> .prod.env
+          echo "PSQL_PORT=${{ secrets.PSQL_PORT }}" >> .prod.env
+          echo "PSQL_USER=${{ secrets.PSQL_USER }}" >> .prod.env
+          echo "PSQL_PASS=${{ secrets.PSQL_PASS }}" >> .prod.env
+          echo "PSQL_DB=${{ secrets.PSQL_DB }}" >> .prod.env
           cp .prod.env build/env.prod
 
       - name: Build
