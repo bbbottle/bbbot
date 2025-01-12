@@ -21,7 +21,7 @@ export const fetchCOCPlayerInfo = async (playerTag: string) => {
     }
   });
 
-  console.log(response.json())
+  console.log(await response.json())
   console.log(response.statusText)
 
   return response.json();
