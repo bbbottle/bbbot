@@ -8,7 +8,6 @@ import {BBContext} from "./context";
 import {stage} from "./stage";
 import {CreatePost, CreateTextPost} from "./middlewares/post";
 
-
 class BBBot {
   bot: Telegraf<BBContext>;
 

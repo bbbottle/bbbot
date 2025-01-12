@@ -1,6 +1,7 @@
 import {createClient, Session, SupabaseClient, User} from "@supabase/supabase-js";
 import * as process from "process";
 import {MsgHelper} from "./MsgHelper";
+import {fetchMyCOCStats} from "./Network";
 
 enum OauthProvider {
   GITHUB = "github",
@@ -52,6 +53,16 @@ export class DataBase {
       title: title,
       content: MsgHelper.Md2Html(body),
     });
+  }
+
+  public async UpdateCOCStats() {
+    try {
+      const stats = await fetchMyCOCStats();
+      return this.supabase.from("coc").upsert(stats);
+    }
+    catch (e) {
+      return e;
+    }
   }
 
   public async UpdateMovieList(name: string, link: string) {
