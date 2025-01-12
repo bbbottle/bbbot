@@ -1,3 +1,4 @@
+import cron from 'node-cron';
 import {Composer, Context, Middleware, MiddlewareFn, session, Telegraf} from "telegraf";
 
 import {Login, AdminRequired, LoginTips, PSessionMiddleware, SessionRestore} from "./middlewares";
@@ -7,6 +8,7 @@ import {FmtString} from "telegraf/format";
 import {BBContext} from "./context";
 import {stage} from "./stage";
 import {CreatePost, CreateTextPost} from "./middlewares/post";
+import {DataBase} from "./utils/DataBase";
 
 class BBBot {
   bot: Telegraf<BBContext>;
@@ -40,9 +42,17 @@ class BBBot {
 
     this.bot.use(CreateTextPost);
 
+    this.startCron();
+
     this.TellAdmin(MsgHelper.GetInitSuccessMessage());
 
     return this.bot.launch();
+  }
+
+  private startCron() {
+    cron.schedule('0 0 0 * * *', () => {
+      DataBase.getInstance().UpdateCOCStats().then(console.log).catch(console.error);
+    });
   }
 
   private InitCommands() {

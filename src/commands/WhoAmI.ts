@@ -17,13 +17,6 @@ export class WhoAmI implements BBCmd {
       return ctx.reply("You are not logged in.")
     }
 
-    try {
-      const res = await DataBase.getInstance().UpdateCOCStats();
-      return ctx.reply(`Updated COC stats. ${res}`);
-    } catch (e) {
-      return ctx.reply(`Failed to update COC stats. ${e}`);
-    }
-
     return ctx.reply(
       ctx.session.SupabaseUser?.email ??
       ctx.session.SupabaseUser?.id ??
