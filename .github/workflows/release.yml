@@ -49,6 +49,7 @@ jobs:
           echo "PSQL_USER=${{ secrets.PSQL_USER }}" >> .prod.env
           echo "PSQL_PASS=${{ secrets.PSQL_PASS }}" >> .prod.env
           echo "PSQL_DB=${{ secrets.PSQL_DB }}" >> .prod.env
+          echo "COC_TOKEN=${{ secrets.COC_TOKEN }}" >> .prod.env
           cp .prod.env build/env.prod
 
       - name: Build
