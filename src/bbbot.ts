@@ -44,8 +44,6 @@ class BBBot {
 
     cron.schedule('0 * * * *', this.syncCocStats.bind(this));
 
-    this.syncCocStats();
-
     this.TellAdmin(MsgHelper.GetInitSuccessMessage());
 
     return this.bot.launch();
