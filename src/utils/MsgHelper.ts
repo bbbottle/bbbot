@@ -8,7 +8,6 @@ import showdown from "showdown";
 import {Markup} from "telegraf";
 import {Commands} from "../commands";
 import {MessageEntity} from "@telegraf/types";
-import CommonMessageEntity = MessageEntity.CommonMessageEntity;
 showdown.setFlavor('github');
 const converter = new showdown.Converter();
 
@@ -20,9 +19,9 @@ export class MsgHelper {
       type: 'bold',
       offset: 4,
       length: pkgJson.version.length,
-    } as CommonMessageEntity];
+    }];
 
-    return new FmtString(originMessage, entities);
+    return new FmtString(originMessage, entities as MessageEntity[]).toString();
   }
 
 
