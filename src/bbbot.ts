@@ -50,7 +50,7 @@ class BBBot {
   }
 
   private startCron() {
-    cron.schedule('0 0 0 * * *', () => {
+    cron.schedule('0 * * * *', () => {
       this.SendMsgToAdmin('cron: Start to update COC stats');
       DataBase.getInstance().UpdateCOCStats().then(console.log).catch(console.error);
     });
