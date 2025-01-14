@@ -42,18 +42,18 @@ class BBBot {
 
     this.bot.use(CreateTextPost);
 
-    this.startCron();
+    cron.schedule('0 * * * *', this.syncCocStats.bind(this));
+
+    this.syncCocStats();
 
     this.TellAdmin(MsgHelper.GetInitSuccessMessage());
 
     return this.bot.launch();
   }
 
-  private startCron() {
-    cron.schedule('0 * * * *', () => {
-      this.SendMsgToAdmin('cron: Start to update COC stats');
-      DataBase.getInstance().UpdateCOCStats().then(console.log).catch(console.error);
-    });
+  private syncCocStats() {
+    this.SendMsgToAdmin('cron: Start to update COC stats');
+    DataBase.getInstance().UpdateCOCStats().then(console.log).catch(console.error);
   }
 
   private InitCommands() {
