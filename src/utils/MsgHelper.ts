@@ -21,7 +21,7 @@ export class MsgHelper {
       length: pkgJson.version.length,
     } as MessageEntity.CommonMessageEntity];
 
-    return new FmtString(originMessage, entities).toString();
+    return new FmtString(originMessage, entities);
   }
 
 
