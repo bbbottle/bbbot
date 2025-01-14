@@ -19,9 +19,9 @@ export class MsgHelper {
       type: 'bold',
       offset: 4,
       length: pkgJson.version.length,
-    }];
+    } as MessageEntity.CommonMessageEntity];
 
-    return new FmtString(originMessage, entities as MessageEntity[]).toString();
+    return new FmtString(originMessage, entities).toString();
   }
 
 
