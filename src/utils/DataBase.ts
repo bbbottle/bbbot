@@ -20,6 +20,10 @@ export class DataBase {
     const sbUrl = process.env.SUPABASE_URL as string;
     const sbAnno = process.env.SUPABASE_ANNO_KEY as string;
 
+    if (!sbUrl || !sbAnno) {
+      throw new Error("Supabase URL or Anno Key is not set");
+    }
+
     this.supabase = createClient(sbUrl, sbAnno, {
       auth: {
         flowType: "pkce"
