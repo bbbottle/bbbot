@@ -2,6 +2,7 @@ import {createClient, Session, SupabaseClient, User} from "@supabase/supabase-js
 import * as process from "process";
 import {MsgHelper} from "./MsgHelper";
 import {fetchMyCOCStats} from "./Network";
+import {Bot} from "../bbbot";
 
 enum OauthProvider {
   GITHUB = "github",
@@ -61,6 +62,7 @@ export class DataBase {
       return this.supabase.from("coc").upsert(stats);
     }
     catch (e) {
+      Bot.SendMsgToAdmin("Failed to update COC stats: " + e);
       return e;
     }
   }

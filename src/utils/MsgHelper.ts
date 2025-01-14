@@ -3,9 +3,12 @@ import {FmtString} from "telegraf/format";
 // @ts-ignore
 import pkgJson from "../../package.json";
 
+// @ts-ignore
 import showdown from "showdown";
 import {Markup} from "telegraf";
 import {Commands} from "../commands";
+import {MessageEntity} from "@telegraf/types";
+import CommonMessageEntity = MessageEntity.CommonMessageEntity;
 showdown.setFlavor('github');
 const converter = new showdown.Converter();
 
@@ -17,11 +20,11 @@ export class MsgHelper {
       type: 'bold',
       offset: 4,
       length: pkgJson.version.length,
-    }];
+    } as CommonMessageEntity];
 
-    // @ts-ignore
     return new FmtString(originMessage, entities);
   }
+
 
   public static Md2Html(msg: string) {
     return converter.makeHtml(msg);
