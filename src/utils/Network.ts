@@ -21,6 +21,7 @@ export const fetchCOCPlayerInfo = async (playerTag: string) => {
     }
   });
 
+
   return response.json();
 }
 
@@ -37,6 +38,9 @@ const pick = (target: any, keys: string[]) => {
 export const fetchMyCOCStats = async () => {
   const info = await fetchCOCPlayerInfo("#GQ9YC2LJ8");
   const keys = ["name", "tag", "townHallLevel", "expLevel", "trophies", "bestTrophies", "warStars", "attackWins", "defenseWins"];
+  if (!info.league) {
+    throw new Error("No league info");
+  }
   return {
     ...pick(info, keys),
     id: info.league.id,

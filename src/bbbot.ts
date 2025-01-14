@@ -52,8 +52,9 @@ class BBBot {
   }
 
   private syncCocStats() {
-    this.SendMsgToAdmin('cron: Start to update COC stats');
-    DataBase.getInstance().UpdateCOCStats().then(console.log).catch(console.error);
+    DataBase.getInstance().UpdateCOCStats().then(() => {
+      this.SendMsgToAdmin("COC stats updated");
+    }).catch(console.error);
   }
 
   private InitCommands() {
