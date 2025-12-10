@@ -57,13 +57,19 @@ export class DataBase {
     return this.supabase.from("post").upsert({
       title: title,
       content: MsgHelper.Md2Html(body),
+    }, {
+      onConflict: 'title',
+      ignoreDuplicates: true
     });
   }
 
   public async UpdateCOCStats() {
     try {
       const stats = await fetchMyCOCStats();
-      return this.supabase.from("coc").upsert(stats);
+      return this.supabase.from("coc").upsert(stats, {
+        onConflict: 'tag',
+        ignoreDuplicates: true
+      });
     }
     catch (e) {
       Bot.SendMsgToAdmin("Failed to update COC stats: " + e);
@@ -77,6 +83,9 @@ export class DataBase {
       link,
       status: "看过",
       visible: 1,
+    }, {
+      onConflict: 'name',
+      ignoreDuplicates: true
     });
   }
 
