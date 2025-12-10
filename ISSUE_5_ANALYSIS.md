@@ -49,9 +49,12 @@ The complete fix requires frontend changes:
 The backend contribution to this issue is being addressed by **PR #8**, which fixes the database operations to prevent unnecessary updates that trigger PWA refresh cycles.
 
 ### Changes Being Made in PR #8:
-1. Review and fix `upsert()` operations in `DataBase.ts`
-2. Add `onConflict` option to prevent duplicate updates
-3. Add `ignoreDuplicates: true` where data hasn't changed
+1. Review and fix `upsert()` operations in `DataBase.ts`:
+   - `CreatePost()` (line 57): Posts table upsert
+   - `UpdateCOCStats()` (line 66): COC stats table upsert  
+   - `UpdateMovieList()` (line 75): Movie table upsert
+2. Add `onConflict` option with appropriate unique columns for each table
+3. Add `ignoreDuplicates: true` where data hasn't changed (prevents timestamp updates)
 4. This reduces PWA update prompts and timing conflicts during route transitions
 
 ## Common Causes and Solutions (For Frontend)
@@ -112,7 +115,7 @@ By fixing Issue #6 (preventing unnecessary database updates), we can reduce the 
 
 **For This Repository (bbbot):**
 1. ✅ Issue #6 and the backend contribution to Issue #5 are being addressed by PR #8
-2. The fix in PR #8 will add proper `onConflict` handling to upsert operations
+2. PR #8 will add proper `onConflict` handling to upsert operations
 3. This will prevent unnecessary updates that trigger PWA refreshes
 
 **For Frontend Repository (bottle):**
