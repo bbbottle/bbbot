@@ -2,3 +2,4 @@
 *.env
 node_modules
 build/bbbot.js
+package-lock.json
