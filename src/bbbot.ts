@@ -22,14 +22,12 @@ interface InitOptions {
 }
 
 class BBBot {
-  bot: Telegraf<BBContext>;
+  bot!: Telegraf<BBContext>;
   private initialized = false;
 
   private static instance: BBBot;
 
-  constructor() {
-    this.bot = new Telegraf<BBContext>(requireEnv("BOT_TOKEN"));
-  }
+  constructor() {}
 
   static GetInstance() {
     if (!BBBot.instance) {
@@ -50,6 +48,8 @@ class BBBot {
     if (this.initialized) {
       return;
     }
+
+    this.bot = new Telegraf<BBContext>(requireEnv("BOT_TOKEN"));
 
     this.bot.use(createSessionMiddleware(options.sessionStore), SessionRestore);
 
