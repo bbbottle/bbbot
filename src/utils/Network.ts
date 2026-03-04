@@ -1,14 +1,17 @@
-import {bootstrap} from 'global-agent';
-import * as process from "process";
-import fetch from 'node-fetch';
+import { getEnv } from "../runtime";
 
 export class Network {
-  public static config() {
-    if (process.env.NODE_ENV as string !== "dev") {
+  public static async config() {
+    if (getEnv("NODE_ENV") !== "dev") {
       return;
     }
 
-    bootstrap();
+    try {
+      const mod = await import("global-agent");
+      mod.bootstrap();
+    } catch {
+      // noop: global-agent is only needed in local dev with proxy
+    }
   }
 }
 
@@ -17,7 +20,7 @@ export const fetchCOCPlayerInfo = async (playerTag: string) => {
 
   const response = await fetch(url, {
     headers: {
-      'Authorization': `Bearer ${process.env.COC_TOKEN}`
+      'Authorization': `Bearer ${getEnv("COC_TOKEN")}`
     }
   });
 

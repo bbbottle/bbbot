@@ -1,32 +1,8 @@
-import { customsearch_v1, Common } from 'googleapis';
-import Schema$Search = customsearch_v1.Schema$Search;
-
-type CustomSearch = customsearch_v1.Customsearch;
-type CustomSearchResult = Common.GaxiosResponse<Schema$Search>;
+import { getEnv } from "../runtime";
 
 export class SearchEngine {
-    private static Init() {
-        SearchEngine.Engine = new customsearch_v1.Customsearch({
-            auth: process.env.GOOGLE_SEARCH_API_KEY,
-        });
-    }
-
-    public constructor() {
-        SearchEngine.Init();
-    }
-
-    public static GetInstance(): CustomSearch {
-        if (!SearchEngine.Engine) {
-            SearchEngine.Init();
-        }
-
-        return SearchEngine.Engine;
-    }
-
-    private static Engine: CustomSearch;
-
-    private static extractFirstResult(res: CustomSearchResult): string {
-        return res.data.items![0].link!;
+    private static extractFirstResult(items: Array<{ link?: string }>): string {
+        return items[0]?.link ?? "";
     }
 
     public static async searchMovie(query: string): Promise<string> {
@@ -34,16 +10,25 @@ export class SearchEngine {
     }
 
     public static async search(query: string): Promise<string> {
-        const res = await this.GetInstance().cse.list({
-            q: query,
-            cx: process.env.GOOGLE_SEARCH_ENGINE_ID,
-        });
+        const key = getEnv("GOOGLE_SEARCH_API_KEY");
+        const cx = getEnv("GOOGLE_SEARCH_ENGINE_ID");
+        if (!key || !cx) {
+            throw new Error("Google search config missing");
+        }
 
-        if (!res.data.items) {
+        const url = new URL("https://www.googleapis.com/customsearch/v1");
+        url.searchParams.set("key", key);
+        url.searchParams.set("cx", cx);
+        url.searchParams.set("q", query);
+
+        const res = await fetch(url.toString());
+        const data = (await res.json()) as { items?: Array<{ link?: string }> };
+
+        if (!data.items || data.items.length === 0) {
             console.log("No result found for", query);
             return "";
         }
 
-        return this.extractFirstResult(res);
+        return this.extractFirstResult(data.items);
     }
 }

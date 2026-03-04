@@ -1,36 +1,34 @@
-import cron from "node-cron";
-import {
-  Composer,
-  Context,
-  Middleware,
-  MiddlewareFn,
-  session,
-  Telegraf,
-} from "telegraf";
+import { Composer, Telegraf, SessionStore } from "telegraf";
 
 import {
   Login,
   AdminRequired,
   LoginTips,
-  PSessionMiddleware,
   SessionRestore,
+  createSessionMiddleware,
 } from "./middlewares";
 import { MsgHelper } from "./utils/MsgHelper";
 import { Commands } from "./commands";
 import { FmtString } from "telegraf/format";
 import { BBContext } from "./context";
 import { stage } from "./stage";
-import { CreatePost, CreateTextPost } from "./middlewares/post";
-import { DataBase } from "./utils/DataBase";
+import { CreateTextPost } from "./middlewares/post";
+import { BBSession } from "./middlewares";
+import { requireEnv } from "./runtime";
+
+interface InitOptions {
+  sessionStore?: SessionStore<BBSession>;
+  notifyOnStart?: boolean;
+}
 
 class BBBot {
   bot: Telegraf<BBContext>;
+  private initialized = false;
 
   private static instance: BBBot;
 
   constructor() {
-    this.bot = new Telegraf<BBContext>(process.env.BOT_TOKEN as string);
-    this.Init().then(this.Noop);
+    this.bot = new Telegraf<BBContext>(requireEnv("BOT_TOKEN"));
   }
 
   static GetInstance() {
@@ -42,12 +40,18 @@ class BBBot {
   }
 
   public config() {
-    process.once("SIGINT", () => Bot.Stop("SIGINT"));
-    process.once("SIGTERM", () => Bot.Stop("SIGTERM"));
+    if ((globalThis as any)?.process) {
+      process.once("SIGINT", () => Bot.Stop("SIGINT"));
+      process.once("SIGTERM", () => Bot.Stop("SIGTERM"));
+    }
   }
 
-  private Init() {
-    this.bot.use(PSessionMiddleware, SessionRestore);
+  public init(options: InitOptions = {}) {
+    if (this.initialized) {
+      return;
+    }
+
+    this.bot.use(createSessionMiddleware(options.sessionStore), SessionRestore);
 
     this.bot.start(Login);
 
@@ -55,9 +59,20 @@ class BBBot {
 
     this.bot.use(CreateTextPost);
 
-    this.TellAdmin(MsgHelper.GetInitSuccessMessage());
+    if (options.notifyOnStart !== false) {
+      this.TellAdmin(MsgHelper.GetInitSuccessMessage());
+    }
 
+    this.initialized = true;
+  }
+
+  public launchPolling() {
+    this.init();
     return this.bot.launch();
+  }
+
+  public handleUpdate(update: unknown) {
+    return this.bot.handleUpdate(update as any);
   }
 
   private InitCommands() {
@@ -74,14 +89,14 @@ class BBBot {
   private TellAdmin(msg: FmtString<string>) {
     console.log(msg.text);
     this.bot.telegram
-      .sendMessage(process.env.ADMIN_ID as string, msg)
+      .sendMessage(requireEnv("ADMIN_ID"), msg)
       .then(this.Noop)
       .catch(console.error);
   }
 
   public SendMsgToAdmin(msg: string) {
     this.bot.telegram
-      .sendMessage(process.env.ADMIN_ID as string, msg)
+      .sendMessage(requireEnv("ADMIN_ID"), msg)
       .then(this.Noop)
       .catch(console.error);
   }

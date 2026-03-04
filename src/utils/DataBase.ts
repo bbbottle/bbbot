@@ -1,8 +1,8 @@
 import {createClient, Session, SupabaseClient, User} from "@supabase/supabase-js";
-import * as process from "process";
 import {MsgHelper} from "./MsgHelper";
 import {fetchMyCOCStats} from "./Network";
 import {Bot} from "../bbbot";
+import { requireEnv } from "../runtime";
 
 enum OauthProvider {
   GITHUB = "github",
@@ -17,8 +17,8 @@ export class DataBase {
   private constructor() {
     // init
 
-    const sbUrl = process.env.SUPABASE_URL as string;
-    const sbAnno = process.env.SUPABASE_ANNO_KEY as string;
+    const sbUrl = requireEnv("SUPABASE_URL");
+    const sbAnno = requireEnv("SUPABASE_ANNO_KEY");
 
     if (!sbUrl || !sbAnno) {
       throw new Error("Supabase URL or Anno Key is not set");
@@ -38,7 +38,7 @@ export class DataBase {
     return await client.signInWithOAuth({
       provider: OauthProvider.GITHUB,
       options: {
-        redirectTo: process.env.SITE_URL as string,
+        redirectTo: requireEnv("SITE_URL"),
       }
     })
   }

@@ -2,6 +2,7 @@ import {DataBase} from "../../utils/DataBase";
 import {Middleware} from "telegraf";
 import * as tt from "telegraf/src/telegram-types";
 import {BBContext} from "../../context";
+import { getEnv } from "../../runtime";
 
 interface StartContextExtn extends tt.CommandContextExtn {
   payload: string
@@ -52,6 +53,9 @@ export const AdminRequired: (t: BBContext) => boolean = ctx => {
     return false;
   }
 
-  return !!(ctx.session.SupabaseUser && ctx.session.SupabaseUser.email === process.env.ADMIN_EMAIL as string);
+  return !!(
+    ctx.session.SupabaseUser &&
+    ctx.session.SupabaseUser.email === getEnv("ADMIN_EMAIL")
+  );
 }
 

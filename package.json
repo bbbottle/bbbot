@@ -8,7 +8,9 @@
     "start": "cross-env NODE_ENV=prod node build/bbbot.js",
     "release": "cross-env NODE_ENV=prod && node build/build.mjs",
     "dev": "cross-env NODE_ENV=prod ts-node src/index.ts",
-    "dev-local": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 GLOBAL_AGENT_HTTPS_PROXY=http://127.0.0.1:7891 NODE_ENV=dev ts-node src/index.ts"
+    "dev-local": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 GLOBAL_AGENT_HTTPS_PROXY=http://127.0.0.1:7891 NODE_ENV=dev ts-node src/index.ts",
+    "dev:worker": "wrangler dev src/worker.ts",
+    "deploy": "wrangler deploy"
   },
   "keywords": [],
   "author": "",
@@ -37,6 +39,7 @@
     "esbuild": "0.24.0",
     "global-agent": "^3.0.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.2"
+    "typescript": "^5.5.2",
+    "wrangler": "^3.84.0"
   }
 }

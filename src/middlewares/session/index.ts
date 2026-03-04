@@ -1,31 +1,35 @@
-import {Composer, Scenes, session, SessionStore} from "telegraf";
-import { Postgres } from "@telegraf/session/pg";
-import {Session, User } from "@supabase/supabase-js";
+import { Composer, Scenes, session, SessionStore } from "telegraf";
+import { Session, User } from "@supabase/supabase-js";
 import {HasLogin} from "../login";
 import {DataBase} from "../../utils/DataBase";
 import {updateMovieSession} from "../../stage/updateMovieScene";
 import {BBContext} from "../../context";
+import { KVNamespace } from "../../runtime";
 
 export interface BBSession extends Scenes.WizardSession<updateMovieSession> {
   SupabaseSession?: Session,
   SupabaseUser?: User,
 }
 
-const store = Postgres<BBSession>({
-  host: process.env.PSQL_HOST as string,
-  database: process.env.PSQL_DB as string,
-  user: process.env.PSQL_USER as string,
-  password: process.env.PSQL_PASS as string,
-  config: {
-    ssl: true
-  }
+export const createKvSessionStore = (
+  kv: KVNamespace,
+  ttlSeconds = 60 * 60 * 24 * 30,
+): SessionStore<BBSession> => ({
+  async get(key) {
+    const value = await kv.get(key);
+    return value ? (JSON.parse(value) as BBSession) : undefined;
+  },
+  async set(key, value) {
+    await kv.put(key, JSON.stringify(value), { expirationTtl: ttlSeconds });
+  },
+  async delete(key) {
+    await kv.delete(key);
+  },
 });
 
-export const PSessionMiddleware = session<BBSession, BBContext, "session">({
-  store: store as SessionStore<BBSession>,
-});
-
-export const SessionMiddleware = session();
+export const createSessionMiddleware = (
+  store?: SessionStore<BBSession>,
+) => session<BBSession, BBContext, "session">({ store });
 
 export const SessionRestore = Composer.optional(HasLogin, async (ctx, next) => {
   await DataBase.getInstance().SetSess(ctx.session.SupabaseSession)
