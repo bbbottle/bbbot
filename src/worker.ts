@@ -10,9 +10,6 @@ interface WorkerEnv {
   SUPABASE_URL: string;
   SUPABASE_ANNO_KEY: string;
   SITE_URL: string;
-  GOOGLE_SEARCH_API_KEY: string;
-  GOOGLE_SEARCH_ENGINE_ID: string;
-  COC_TOKEN: string;
   WEBHOOK_SECRET: string;
   SESSION_KV: KVNamespace;
   NODE_ENV?: string;

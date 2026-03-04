@@ -1,6 +1,5 @@
 import {createClient, Session, SupabaseClient, User} from "@supabase/supabase-js";
 import {MsgHelper} from "./MsgHelper";
-import {fetchMyCOCStats} from "./Network";
 import {Bot} from "../bbbot";
 import { requireEnv } from "../runtime";
 
@@ -58,17 +57,6 @@ export class DataBase {
       title: title,
       content: MsgHelper.Md2Html(body),
     });
-  }
-
-  public async UpdateCOCStats() {
-    try {
-      const stats = await fetchMyCOCStats();
-      return this.supabase.from("coc").upsert(stats);
-    }
-    catch (e) {
-      Bot.SendMsgToAdmin("Failed to update COC stats: " + e);
-      return e;
-    }
   }
 
   public async UpdateMovieList(name: string, link: string) {

@@ -55,8 +55,7 @@ Both modes share the same bot logic in `src/bbbot.ts`.
 
 **Utils** (`src/utils/`):
 - `DataBase.ts` - Supabase client singleton for DB operations and OAuth
-- `Network.ts` - HTTP configuration and COC stats fetching
-- `SearchEngine.ts` - Google Custom Search integration
+- `Network.ts` - HTTP configuration
 - `MsgHelper.ts` - Message formatting utilities
 
 ### Authentication Flow
@@ -90,8 +89,6 @@ Sending a multi-line message creates a post:
 
 **Optional:**
 - `SITE_URL` - OAuth redirect URL
-- `GOOGLE_SEARCH_API_KEY` / `GOOGLE_SEARCH_ENGINE_ID` - Search feature
-- `COC_TOKEN` - Clash of Clans stats feature
 
 ### Build System
 

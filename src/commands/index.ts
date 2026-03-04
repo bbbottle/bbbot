@@ -4,7 +4,6 @@ import {WhoAmI} from "./WhoAmI";
 import {Logout} from "./Logout";
 import {Avatar} from "./Avatar";
 import {Help} from "./Help";
-import {Now} from "./Now";
 
 export const Commands = [
   new LoginCommand(),
@@ -12,5 +11,4 @@ export const Commands = [
   new WhoAmI(),
   new Avatar(),
   new Help(),
-  new Now(),
 ] as BBCmd[]
