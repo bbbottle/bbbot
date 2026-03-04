@@ -7,65 +7,21 @@ on:
       - main
     paths:
       - 'src/**'
-      - 'build/**'
       - '.github/workflows/**'
+      - 'wrangler.toml'
       - 'package.json'
 
 jobs:
-  build_and_deploy:
+  deploy:
     runs-on: ubuntu-latest
-    name: release
+    name: Deploy to Cloudflare Workers
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
         with:
-          version: 9
-          run_install: false
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Create .env file
-        run: |
-          echo "ADMIN_ID=${{ secrets.ADMIN_ID }}" >> .prod.env
-          echo "ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}" >> .prod.env
-          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .prod.env
-          echo "SUPABASE_ANNO_KEY=${{ secrets.SUPABASE_ANNO_KEY }}" >> .prod.env
-          echo "BOT_TOKEN=${{ secrets.BOT_TOKEN }}" >> .prod.env
-          echo "SITE_URL=${{ secrets.SITE_URL }}" >> .prod.env
-          echo "PSQL_HOST=${{ secrets.PSQL_HOST }}" >> .prod.env
-          echo "PSQL_PORT=${{ secrets.PSQL_PORT }}" >> .prod.env
-          echo "PSQL_USER=${{ secrets.PSQL_USER }}" >> .prod.env
-          echo "PSQL_PASS=${{ secrets.PSQL_PASS }}" >> .prod.env
-          echo "PSQL_DB=${{ secrets.PSQL_DB }}" >> .prod.env
-          cp .prod.env build/env.prod
-
-      - name: Build
-        run: pnpm release
-
-      - name: Deploy to server
-        uses: easingthemes/ssh-deploy@main
-        env:
-          PROJECT_ROOT: ${{ secrets.PROJECT_ROOT }}
-          TARGET: ${{ secrets.TARGET }}
-        with:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          ARGS: "-rlgoDzvc --delete"
-          SOURCE: "build/*"
-          REMOTE_HOST: ${{ secrets.HOST }}
-          REMOTE_USER: ${{ secrets.USERNAME }}
-          TARGET: ${{ secrets.TARGET }}
-          EXCLUDE: "/dist/, /node_modules/"
-          SCRIPT_BEFORE: |
-            echo "before"
-          SCRIPT_AFTER: |
-            ~/bin/restartBBBot.sh
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
