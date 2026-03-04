@@ -17,8 +17,9 @@ interface WorkerEnv {
 
 export default {
   async fetch(request: Request, env: WorkerEnv): Promise<Response> {
-    setRuntimeEnv(env);
-    setRuntimeBindings({ SESSION_KV: env.SESSION_KV });
+    const { SESSION_KV, ...stringEnv } = env;
+    setRuntimeEnv(stringEnv);
+    setRuntimeBindings({ SESSION_KV });
 
     Bot.init({
       sessionStore: env.SESSION_KV ? createKvSessionStore(env.SESSION_KV) : undefined,
