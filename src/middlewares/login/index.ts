@@ -1,6 +1,5 @@
 import {DataBase} from "../../utils/DataBase";
-import {Middleware} from "telegraf";
-import * as tt from "telegraf/src/telegram-types";
+import {Middleware, Types as tt} from "telegraf";
 import {BBContext} from "../../context";
 import { getEnv } from "../../runtime";
 

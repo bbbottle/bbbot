@@ -1,7 +1,6 @@
 import {BBCmd} from "./types";
 import {DataBase} from "../utils/DataBase";
-import {Context, Middleware} from "telegraf";
-import * as tt from "telegraf/src/telegram-types";
+import {Context, Middleware, Types as tt} from "telegraf";
 import {MsgHelper} from "../utils/MsgHelper";
 import {MsgConst} from "../consts/MsgConst";
 

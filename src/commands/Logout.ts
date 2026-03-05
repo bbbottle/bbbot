@@ -1,5 +1,5 @@
 import {BBCmd} from "./types";
-import * as tt from "telegraf/src/telegram-types";
+import { Types as tt } from "telegraf";
 import {BBContext} from "../context";
 
 export class Logout implements BBCmd {
