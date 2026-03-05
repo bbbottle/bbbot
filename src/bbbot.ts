@@ -13,6 +13,7 @@ import { FmtString } from "telegraf/format";
 import { BBContext } from "./context";
 import { stage } from "./stage";
 import { CreateTextPost } from "./middlewares/post";
+import { CreateTextStream } from "./middlewares/stream";
 import { BBSession } from "./middlewares";
 import { requireEnv } from "./runtime";
 
@@ -57,6 +58,7 @@ class BBBot {
 
     this.InitCommands();
 
+    this.bot.use(CreateTextStream);
     this.bot.use(CreateTextPost);
 
     if (options.notifyOnStart !== false) {
