@@ -8,12 +8,12 @@ export interface Stream {
   created_at: string;
 }
 
-const API_CF_ENDPOINT = requireEnv("API_CF_ENDPOINT");
-const STREAM_API_KEY = requireEnv("STREAM_API_KEY");
-
 export async function createStreamReq(
   content: string,
 ): Promise<{ data: Stream }> {
+  const API_CF_ENDPOINT = requireEnv("API_CF_ENDPOINT");
+  const STREAM_API_KEY = requireEnv("STREAM_API_KEY");
+
   const response = await fetch(`${API_CF_ENDPOINT}/streaming`, {
     method: "POST",
     headers: {
