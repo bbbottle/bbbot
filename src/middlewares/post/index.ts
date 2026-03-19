@@ -1,8 +1,8 @@
 import {Composer, Middleware} from "telegraf";
 import {BBContext} from "../../context";
-import {DataBase} from "../../utils/DataBase";
 import {AdminRequired} from "../login";
 import {MsgConst} from "../../consts/MsgConst";
+import { createPost } from "../../utils/api";
 
 const Post:Middleware<BBContext> = async (ctx, next) => {
   if(!ctx.message) {
@@ -26,10 +26,11 @@ const Post:Middleware<BBContext> = async (ctx, next) => {
   const title = lines[0];
   const body = lines.slice(1).join("\n");
 
-  const res = await DataBase.getInstance().CreatePost(title, body);
-  console.log(res);
-  if (res.error) {
-    return ctx.reply(res.error.message);
+  try {
+    const res = await createPost(title, body);
+    console.log(res);
+  } catch (error) {
+    return ctx.reply(error instanceof Error ? error.message : String(error));
   }
 
   // delete incoming message
