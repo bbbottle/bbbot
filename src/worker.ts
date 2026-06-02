@@ -7,6 +7,7 @@ import { routeMessage } from "./campfire";
 interface WorkerEnv {
   BOT_TOKEN: string;
   ADMIN_ID: string;
+  ADMIN_IDS: string;
   ADMIN_EMAIL: string;
   SUPABASE_URL: string;
   SUPABASE_ANNO_KEY: string;
