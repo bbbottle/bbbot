@@ -2,7 +2,7 @@ import type { Update } from "telegraf/types";
 import { Bot } from "./bbbot";
 import { createKvSessionStore } from "./middlewares";
 import { KVNamespace, requireEnv, setRuntimeBindings, setRuntimeEnv } from "./runtime";
-import { routeMessage, handleOAuthCallback } from "./campfire";
+import { routeMessage } from "./campfire";
 
 interface WorkerEnv {
   BOT_TOKEN: string;
@@ -43,7 +43,7 @@ export default {
     if (request.method === "POST" && url.pathname === "/campfire/message") {
       try {
         const payload = await request.json() as import("./campfire/types").CampfireMessage;
-        const response = await routeMessage(payload, env.SESSION_KV, request);
+        const response = await routeMessage(payload);
         return new Response(response, {
           headers: { "Content-Type": "text/html; charset=utf-8" },
         });
@@ -54,11 +54,6 @@ export default {
           { status: 500 },
         );
       }
-    }
-
-    // Campfire OAuth callback
-    if (request.method === "GET" && url.pathname === "/campfire/oauth/callback") {
-      return handleOAuthCallback(request, env.SESSION_KV);
     }
 
     // Health check
