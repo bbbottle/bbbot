@@ -48,7 +48,7 @@ export const content: HandlerFn = async (payload) => {
   const lines = text.split("\n");
 
   if (!isAdmin(payload.user.id)) {
-    return `You are not authorized to create content. ${payload.user.id} is not in the admin list.`;
+    return `You are not authorized to create content. ${payload.user.name} is not in the admin list.`;
   }
 
   if (lines.length < 2) {
