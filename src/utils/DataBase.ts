@@ -30,14 +30,14 @@ export class DataBase {
     });
   }
 
-  public async SignIn() {
+  public async SignIn(customRedirectTo?: string) {
     const client = this.supabase.auth;
 
     // @ts-ignore
     return await client.signInWithOAuth({
       provider: OauthProvider.GITHUB,
       options: {
-        redirectTo: requireEnv("SITE_URL"),
+        redirectTo: customRedirectTo ?? requireEnv("SITE_URL"),
       }
     })
   }
