@@ -10,3 +10,8 @@ kv_namespaces = [
 [vars]
 ADMIN_IDS = "1"
 API_CF_ENDPOINT = "https://cf.bbki.ng"
+
+[observability.logs]
+enabled = false
+invocation_logs = true
+

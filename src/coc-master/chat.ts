@@ -67,20 +67,38 @@ export async function askCocMaster(
   }
 
   const kimi = createKimiClient(config.kimiApiKey);
-  const mergedToken = `${config.cocToken}:${config.proxyKey}`;
 
-  const result = await generateText({
-    model: kimi('kimi-for-coding'),
-    system,
-    messages: [{ role: 'user', content: question }],
-    tools: {
-      getPlayerInfo: getPlayerInfoTool(playerTag, mergedToken),
-      getClanInfo: getClanInfoTool(mergedToken),
-      getCurrentWar: getCurrentWarTool(mergedToken),
-      getDevelopmentGuide: getDevelopmentGuideTool(config.kv),
-    },
-    maxSteps: 10,
-  });
+  try {
+    const result = await generateText({
+      model: kimi('kimi-for-coding'),
+      system,
+      messages: [{ role: 'user', content: question }],
+      tools: {
+        getPlayerInfo: getPlayerInfoTool(playerTag, config.cocToken, config.proxyKey),
+        getClanInfo: getClanInfoTool(config.cocToken, config.proxyKey),
+        getCurrentWar: getCurrentWarTool(config.cocToken, config.proxyKey),
+        getDevelopmentGuide: getDevelopmentGuideTool(config.kv),
+      },
+      maxSteps: 10,
+    });
 
-  return result.text;
+    return result.text;
+  } catch (error) {
+    const err = error as Error;
+    // Distinguish Kimi API errors from tool/COC errors
+    const isKimiError =
+      err.message?.includes('kimi') ||
+      err.message?.includes('API') ||
+      err.message?.includes('fetch');
+    console.error(
+      '[chat] generateText failed:',
+      err.message,
+      'cause:', (err as any).cause,
+      'stack:', err.stack?.slice(0, 300)
+    );
+    if (isKimiError) {
+      throw new Error(`Kimi API 调用失败: ${err.message}。请检查 KIMI_API_KEY。`);
+    }
+    throw err;
+  }
 }

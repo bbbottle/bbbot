@@ -12784,18 +12784,19 @@ var anthropic = createAnthropic();
 // src/coc-master/coc-service.ts
 var COC_API_BASE = "http://47.106.33.249:3000/v1";
 var CocService = class {
-  async fetchCoc(endpoint, token) {
-    const [t, k] = token.split(":");
+  async fetchCoc(endpoint, token, proxyKey) {
     const response = await fetch(`${COC_API_BASE}${endpoint}`, {
       headers: {
-        Authorization: `Bearer ${t}`,
-        "X-Proxy-Key": k,
+        Authorization: `Bearer ${token}`,
+        "X-Proxy-Key": proxyKey,
         Accept: "application/json"
       }
     });
     if (!response.ok) {
       const errorText = await response.text().catch(() => "Unknown error");
-      throw new Error(`COC API error (${response.status}): ${errorText}`);
+      throw new Error(
+        `COC API ${response.status}: ${errorText} (proxy: ${COC_API_BASE}${endpoint})`
+      );
     }
     return response.json();
   }
@@ -12803,33 +12804,31 @@ var CocService = class {
     const withHash = tag.startsWith("#") ? tag : `#${tag}`;
     return encodeURIComponent(withHash);
   }
-  async getPlayer(playerTag, token) {
-    return this.fetchCoc(`/players/${this.normalizeTag(playerTag)}`, token);
+  async getPlayer(playerTag, token, proxyKey) {
+    return this.fetchCoc(`/players/${this.normalizeTag(playerTag)}`, token, proxyKey);
   }
-  async getClan(clanTag, token) {
-    return this.fetchCoc(`/clans/${this.normalizeTag(clanTag)}`, token);
+  async getClan(clanTag, token, proxyKey) {
+    return this.fetchCoc(`/clans/${this.normalizeTag(clanTag)}`, token, proxyKey);
   }
-  async getCurrentWar(clanTag, token) {
-    return this.fetchCoc(`/clans/${this.normalizeTag(clanTag)}/currentwar`, token);
+  async getCurrentWar(clanTag, token, proxyKey) {
+    return this.fetchCoc(`/clans/${this.normalizeTag(clanTag)}/currentwar`, token, proxyKey);
   }
 };
 var cocService = new CocService();
 
 // src/coc-master/tools/get-player-info.tool.ts
-var getPlayerInfoTool = (defaultPlayerTag, defaultToken) => tool({
+var getPlayerInfoTool = (defaultPlayerTag, token, proxyKey) => tool({
   description: "\u83B7\u53D6\u73A9\u5BB6\u4E2A\u4EBA\u4FE1\u606F\u3001\u6751\u5E84\u3001\u82F1\u96C4\u3001\u5175\u79CD\u7B49\u7EA7\u3001\u6CD5\u672F\u7B49\u7EA7\u3001\u6210\u5C31\u7B49\u8BE6\u7EC6\u6570\u636E",
   parameters: external_exports.object({
-    playerTag: external_exports.string().optional().describe("\u73A9\u5BB6\u6807\u7B7E\uFF0C\u5982 #2P0J9PY8G\u3002\u5982\u679C\u672A\u63D0\u4F9B\uFF0C\u4F7F\u7528\u5F53\u524D\u914D\u7F6E\u7684\u73A9\u5BB6\u6807\u7B7E"),
-    token: external_exports.string().optional().describe("COC Developer API Token\u3002\u5982\u679C\u672A\u63D0\u4F9B\uFF0C\u4F7F\u7528 defaultToken")
+    playerTag: external_exports.string().optional().describe("\u73A9\u5BB6\u6807\u7B7E\uFF0C\u5982 #2P0J9PY8G\u3002\u5982\u679C\u672A\u63D0\u4F9B\uFF0C\u4F7F\u7528\u5F53\u524D\u914D\u7F6E\u7684\u73A9\u5BB6\u6807\u7B7E")
   }),
   execute: async (args) => {
     const tag = args.playerTag || defaultPlayerTag;
-    const tok = args.token || defaultToken;
-    if (!tag || !tok) {
-      return JSON.stringify({ error: "\u7F3A\u5C11\u73A9\u5BB6\u6807\u7B7E\u6216 Token\uFF0C\u8BF7\u5148\u5728\u914D\u7F6E\u4E2D\u586B\u5199" });
+    if (!tag) {
+      return JSON.stringify({ error: "\u7F3A\u5C11\u73A9\u5BB6\u6807\u7B7E" });
     }
     try {
-      const data = await cocService.getPlayer(tag, tok);
+      const data = await cocService.getPlayer(tag, token, proxyKey);
       return JSON.stringify(data);
     } catch (error) {
       return JSON.stringify({
@@ -12840,19 +12839,14 @@ var getPlayerInfoTool = (defaultPlayerTag, defaultToken) => tool({
 });
 
 // src/coc-master/tools/get-clan-info.tool.ts
-var getClanInfoTool = (defaultToken) => tool({
+var getClanInfoTool = (token, proxyKey) => tool({
   description: "\u83B7\u53D6\u90E8\u843D\u8BE6\u7EC6\u4FE1\u606F\uFF0C\u5305\u62EC\u90E8\u843D\u7B49\u7EA7\u3001\u6210\u5458\u5217\u8868\u3001\u6218\u4E89\u65E5\u5FD7\u3001\u90E8\u843D\u63CF\u8FF0\u7B49",
   parameters: external_exports.object({
-    clanTag: external_exports.string().describe("\u90E8\u843D\u6807\u7B7E\uFF0C\u5982 #2YJ8QR2Q"),
-    token: external_exports.string().optional().describe("COC Developer API Token\u3002\u4F7F\u7528\u5F53\u524D\u914D\u7F6E\u7684 Token")
+    clanTag: external_exports.string().describe("\u90E8\u843D\u6807\u7B7E\uFF0C\u5982 #2YJ8QR2Q")
   }),
   execute: async (args) => {
-    const tok = args.token || defaultToken;
-    if (!tok) {
-      return JSON.stringify({ error: "\u7F3A\u5C11 Token\uFF0C\u8BF7\u5148\u5728\u914D\u7F6E\u4E2D\u586B\u5199" });
-    }
     try {
-      const data = await cocService.getClan(args.clanTag, tok);
+      const data = await cocService.getClan(args.clanTag, token, proxyKey);
       return JSON.stringify(data);
     } catch (error) {
       return JSON.stringify({
@@ -12863,19 +12857,14 @@ var getClanInfoTool = (defaultToken) => tool({
 });
 
 // src/coc-master/tools/get-current-war.tool.ts
-var getCurrentWarTool = (defaultToken) => tool({
+var getCurrentWarTool = (token, proxyKey) => tool({
   description: "\u83B7\u53D6\u90E8\u843D\u5F53\u524D\u6218\u4E89\u4FE1\u606F",
   parameters: external_exports.object({
-    clanTag: external_exports.string().describe("\u90E8\u843D\u6807\u7B7E"),
-    token: external_exports.string().optional().describe("COC Developer API Token\u3002\u5982\u679C\u672A\u63D0\u4F9B\uFF0C\u4F7F\u7528 defaultToken")
+    clanTag: external_exports.string().describe("\u90E8\u843D\u6807\u7B7E")
   }),
   execute: async (args) => {
-    const tok = args.token || defaultToken;
-    if (!tok) {
-      return JSON.stringify({ error: "\u7F3A\u5C11 Token\uFF0C\u8BF7\u5148\u5728\u914D\u7F6E\u4E2D\u586B\u5199" });
-    }
     try {
-      const data = await cocService.getCurrentWar(args.clanTag, tok);
+      const data = await cocService.getCurrentWar(args.clanTag, token, proxyKey);
       return JSON.stringify(data);
     } catch (error) {
       return JSON.stringify({
@@ -13190,15 +13179,14 @@ async function askCocMaster(playerTag, question, config) {
 \u5F53\u524D\u670D\u52A1\u73A9\u5BB6\u6807\u7B7E: ${playerTag}`;
   }
   const kimi = createKimiClient(config.kimiApiKey);
-  const mergedToken = `${config.cocToken}:${config.proxyKey}`;
   const result = await generateText({
     model: kimi("kimi-for-coding"),
     system,
     messages: [{ role: "user", content: question }],
     tools: {
-      getPlayerInfo: getPlayerInfoTool(playerTag, mergedToken),
-      getClanInfo: getClanInfoTool(mergedToken),
-      getCurrentWar: getCurrentWarTool(mergedToken),
+      getPlayerInfo: getPlayerInfoTool(playerTag, config.cocToken, config.proxyKey),
+      getClanInfo: getClanInfoTool(config.cocToken, config.proxyKey),
+      getCurrentWar: getCurrentWarTool(config.cocToken, config.proxyKey),
       getDevelopmentGuide: getDevelopmentGuideTool(config.kv)
     },
     maxSteps: 10
@@ -13226,17 +13214,30 @@ var cocMaster = async (payload) => {
   }
   const playerTag = `#${match[1].toUpperCase()}`;
   const question = match[2].trim() || "\u67E5\u770B\u6211\u7684\u6751\u5E84\u4FE1\u606F";
-  const config = {
-    kimiApiKey: getEnv("KIMI_API_KEY") || "",
-    cocToken: getEnv("COC_TOKEN") || "",
-    proxyKey: getEnv("PROXY_KEY") || "nshzpldjbm_L",
-    kv: getKV()
-  };
+  const kimiApiKey = getEnv("KIMI_API_KEY");
+  const cocToken = getEnv("COC_TOKEN");
+  const proxyKey = getEnv("PROXY_KEY");
+  const missing = [];
+  if (!kimiApiKey) missing.push("KIMI_API_KEY");
+  if (!cocToken) missing.push("COC_TOKEN");
+  if (!proxyKey) missing.push("PROXY_KEY");
+  if (missing.length > 0) {
+    return `\u7F3A\u5C11\u73AF\u5883\u53D8\u91CF: ${missing.join(", ")}\u3002\u8BF7\u7528 wrangler secret put \u8BBE\u7F6E\u3002`;
+  }
+  console.log(
+    `[coc-master] query player=${playerTag} question=${question.slice(0, 50)} kimi=${kimiApiKey.slice(0, 8)}... coc=${cocToken.slice(0, 20)}... proxy=${proxyKey.slice(0, 6)}...`
+  );
   try {
-    const response = await askCocMaster(playerTag, question, config);
+    const response = await askCocMaster(playerTag, question, {
+      kimiApiKey,
+      cocToken,
+      proxyKey,
+      kv: getKV()
+    });
     return `<pre>${escapeHtml2(response)}</pre>`;
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : "Unknown error";
+    console.error("[coc-master] error:", errMsg);
     return `COC \u67E5\u8BE2\u5931\u8D25: ${escapeHtml2(errMsg)}`;
   }
 };
