@@ -36,8 +36,8 @@ export default {
               const replyUrl = `https://base.bbki.ng/rooms/${payload.room.id}/3-a6E7EFNFxxZv/messages`;
               await fetch(replyUrl, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ content: result }),
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: result,
               });
             } catch (err) {
               console.error("[coc] background processing failed:", err);
