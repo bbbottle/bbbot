@@ -1,22 +1,14 @@
-import type { Update } from "telegraf/types";
-import { Bot } from "./bbbot";
-import { createKvSessionStore } from "./middlewares";
-import { KVNamespace, requireEnv, setRuntimeBindings, setRuntimeEnv } from "./runtime";
 import { routeMessage } from "./campfire";
+import { type KVNamespace, setRuntimeBindings, setRuntimeEnv } from "./runtime";
 
 interface WorkerEnv {
-  BOT_TOKEN: string;
-  ADMIN_ID: string;
   ADMIN_IDS: string;
-  ADMIN_EMAIL: string;
-  SUPABASE_URL: string;
-  SUPABASE_ANNO_KEY: string;
-  SITE_URL: string;
-  WEBHOOK_SECRET: string;
-  SESSION_KV: KVNamespace;
-  NODE_ENV?: string;
   STREAM_API_KEY: string;
   API_CF_ENDPOINT: string;
+  SESSION_KV: KVNamespace;
+  KIMI_API_KEY: string;
+  COC_TOKEN: string;
+  PROXY_KEY?: string;
 }
 
 export default {
@@ -25,20 +17,7 @@ export default {
     setRuntimeEnv(stringEnv);
     setRuntimeBindings({ SESSION_KV });
 
-    Bot.init({
-      sessionStore: env.SESSION_KV ? createKvSessionStore(env.SESSION_KV) : undefined,
-      notifyOnStart: false,
-    });
-
     const url = new URL(request.url);
-    const webhookPath = `/telegram/${requireEnv("WEBHOOK_SECRET")}`;
-
-    // Existing Telegram webhook route
-    if (request.method === "POST" && url.pathname === webhookPath) {
-      const update = (await request.json()) as Update;
-      await Bot.handleUpdate(update);
-      return new Response("OK");
-    }
 
     // Campfire message webhook
     if (request.method === "POST" && url.pathname === "/campfire/message") {

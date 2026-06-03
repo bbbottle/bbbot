@@ -6,3 +6,7 @@ compatibility_flags = ["nodejs_compat"]
 kv_namespaces = [
   { binding = "SESSION_KV", id = "c60b46ac6bc2495f846dd55a23bb8e29", preview_id = "YOUR_PREVIEW_ID" }
 ]
+
+[vars]
+ADMIN_IDS = "1"
+API_CF_ENDPOINT = "https://cf.bbki.ng"

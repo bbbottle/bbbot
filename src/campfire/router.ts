@@ -1,5 +1,6 @@
 import { HandlerFn } from "./types";
 import * as handlers from "./handlers";
+import { isCocQuery, cocMaster } from "./coc-master";
 
 const COMMANDS: Record<string, HandlerFn> = {
   help:    handlers.help,
@@ -8,10 +9,15 @@ const COMMANDS: Record<string, HandlerFn> = {
 };
 
 export async function routeMessage(payload: import("./types").CampfireMessage): Promise<string> {
-  const lower = payload.message.body.plain.trim().toLowerCase();
+  const plain = payload.message.body.plain.trim();
+  const lower = plain.toLowerCase();
 
   if (COMMANDS[lower]) {
     return COMMANDS[lower](payload);
+  }
+
+  if (isCocQuery(plain)) {
+    return cocMaster(payload);
   }
 
   return handlers.content(payload);

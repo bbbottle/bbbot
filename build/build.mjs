@@ -1,13 +1,12 @@
 import * as esbuild from 'esbuild'
-import {GetDefineObj} from './defineEnv.mjs';
 
-const options = {
-  entryPoints: ['./src/index.ts'],
-  outfile: './build/bbbot.js',
-  platform: 'node',
+await esbuild.build({
+  entryPoints: ['./src/worker.ts'],
+  outfile: './build/worker.js',
+  platform: 'neutral',
+  format: 'esm',
   bundle: true,
-  define: GetDefineObj(),
   treeShaking: true,
-}
-
-esbuild.build(options).catch(() => process.exit(1))
+  target: 'es2022',
+  external: ['cloudflare:workers'],
+}).catch(() => process.exit(1))
