@@ -13179,19 +13179,36 @@ async function askCocMaster(playerTag, question, config) {
 \u5F53\u524D\u670D\u52A1\u73A9\u5BB6\u6807\u7B7E: ${playerTag}`;
   }
   const kimi = createKimiClient(config.kimiApiKey);
-  const result = await generateText({
-    model: kimi("kimi-for-coding"),
-    system,
-    messages: [{ role: "user", content: question }],
-    tools: {
-      getPlayerInfo: getPlayerInfoTool(playerTag, config.cocToken, config.proxyKey),
-      getClanInfo: getClanInfoTool(config.cocToken, config.proxyKey),
-      getCurrentWar: getCurrentWarTool(config.cocToken, config.proxyKey),
-      getDevelopmentGuide: getDevelopmentGuideTool(config.kv)
-    },
-    maxSteps: 10
-  });
-  return result.text;
+  try {
+    const result = await generateText({
+      model: kimi("kimi-for-coding"),
+      system,
+      messages: [{ role: "user", content: question }],
+      tools: {
+        getPlayerInfo: getPlayerInfoTool(playerTag, config.cocToken, config.proxyKey),
+        getClanInfo: getClanInfoTool(config.cocToken, config.proxyKey),
+        getCurrentWar: getCurrentWarTool(config.cocToken, config.proxyKey),
+        getDevelopmentGuide: getDevelopmentGuideTool(config.kv)
+      },
+      maxSteps: 10
+    });
+    return result.text;
+  } catch (error) {
+    const err = error;
+    const isKimiError = err.message?.includes("Forbidden") || err.message?.includes("Unauthorized") || err.message?.includes("fetch");
+    console.error(
+      "[chat] generateText failed:",
+      err.message,
+      "cause:",
+      err.cause,
+      "stack:",
+      err.stack?.slice(0, 300)
+    );
+    if (isKimiError) {
+      throw new Error(`Kimi API \u8C03\u7528\u5931\u8D25: ${err.message}\u3002\u8BF7\u68C0\u67E5 KIMI_API_KEY \u6216\u786E\u8BA4 CF Worker \u51FA\u53E3 IP \u5728 Kimi \u767D\u540D\u5355\u4E2D\u3002`);
+    }
+    throw err;
+  }
 }
 
 // src/campfire/coc-master.ts

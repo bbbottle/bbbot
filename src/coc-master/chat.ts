@@ -85,10 +85,9 @@ export async function askCocMaster(
     return result.text;
   } catch (error) {
     const err = error as Error;
-    // Distinguish Kimi API errors from tool/COC errors
     const isKimiError =
-      err.message?.includes('kimi') ||
-      err.message?.includes('API') ||
+      err.message?.includes('Forbidden') ||
+      err.message?.includes('Unauthorized') ||
       err.message?.includes('fetch');
     console.error(
       '[chat] generateText failed:',
@@ -97,7 +96,7 @@ export async function askCocMaster(
       'stack:', err.stack?.slice(0, 300)
     );
     if (isKimiError) {
-      throw new Error(`Kimi API 调用失败: ${err.message}。请检查 KIMI_API_KEY。`);
+      throw new Error(`Kimi API 调用失败: ${err.message}。请检查 KIMI_API_KEY 或确认 CF Worker 出口 IP 在 Kimi 白名单中。`);
     }
     throw err;
   }
