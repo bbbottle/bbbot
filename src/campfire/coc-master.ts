@@ -1,6 +1,6 @@
 import { HandlerFn } from "./types";
 import { getEnv, getBindings } from "../runtime";
-import { askCocMaster } from "../coc-master/chat";
+import { askCocMaster, type AIProvider } from "../coc-master/chat";
 import { MemoryKV, type SimpleKV } from "../coc-master/coc-wiki-importer";
 
 const COC_TAG_PATTERN = /^#([A-Z0-9]{6,12})\s*(.*)$/i;
@@ -29,14 +29,17 @@ export const cocMaster: HandlerFn = async (payload) => {
   const question = match[2].trim() || '查看我的村庄信息';
 
   // Gather config — all must come from env, no hardcoded fallbacks
+  const aiProvider: AIProvider = (getEnv('COC_AI_PROVIDER') as AIProvider) || 'kimi';
   const kimiApiKey = getEnv('KIMI_API_KEY');
+  const deepseekApiKey = getEnv('DEEPSEEK_API_KEY');
   const cocToken = getEnv('COC_TOKEN');
   const proxyKey = getEnv('PROXY_KEY');
 
   const missing: string[] = [];
-  if (!kimiApiKey) missing.push('KIMI_API_KEY');
   if (!cocToken) missing.push('COC_TOKEN');
   if (!proxyKey) missing.push('PROXY_KEY');
+  if (aiProvider === 'kimi' && !kimiApiKey) missing.push('KIMI_API_KEY');
+  if (aiProvider === 'deepseek' && !deepseekApiKey) missing.push('DEEPSEEK_API_KEY');
 
   if (missing.length > 0) {
     return `缺少环境变量: ${missing.join(', ')}。请用 wrangler secret put 设置。`;
@@ -44,16 +47,18 @@ export const cocMaster: HandlerFn = async (payload) => {
 
   console.log(
     `[coc-master] query player=${playerTag} question=${question.slice(0, 50)} ` +
-    `kimi=${kimiApiKey!.slice(0, 8)}... coc=${cocToken!.slice(0, 20)}... proxy=${proxyKey!.slice(0, 6)}...`
+    `provider=${aiProvider} coc=${cocToken!.slice(0, 20)}... proxy=${proxyKey!.slice(0, 6)}...`
   );
 
-  if (!kimiApiKey || !cocToken || !proxyKey) {
+  if (!cocToken || !proxyKey) {
     return `Configuration error: ${missing.join(', ')} is required.`;
   }
 
   try {
     const response = await askCocMaster(playerTag, question, {
+      provider: aiProvider,
       kimiApiKey,
+      deepseekApiKey,
       cocToken,
       proxyKey,
       kv: getKV(),

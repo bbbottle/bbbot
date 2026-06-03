@@ -5,7 +5,7 @@ import { cocService } from '../coc-service';
 export const getPlayerInfoTool = (defaultPlayerTag: string, token: string, proxyKey: string) =>
   tool({
     description: '获取玩家个人信息、村庄、英雄、兵种等级、法术等级、成就等详细数据',
-    parameters: z.object({
+    inputSchema: z.object({
       playerTag: z
         .string()
         .optional()

@@ -2,6 +2,8 @@ import { HandlerFn } from "./types";
 import * as handlers from "./handlers";
 import { isCocQuery, cocMaster } from "./coc-master";
 
+export { isCocQuery };
+
 const COMMANDS: Record<string, HandlerFn> = {
   help:    handlers.help,
   avatar:  handlers.avatar,

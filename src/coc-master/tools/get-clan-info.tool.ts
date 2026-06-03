@@ -5,7 +5,7 @@ import { cocService } from '../coc-service';
 export const getClanInfoTool = (token: string, proxyKey: string) =>
   tool({
     description: '获取部落详细信息，包括部落等级、成员列表、战争日志、部落描述等',
-    parameters: z.object({
+    inputSchema: z.object({
       clanTag: z.string().describe('部落标签，如 #2YJ8QR2Q'),
     }),
     execute: async (args: { clanTag: string }) => {

@@ -7,7 +7,7 @@ export const getDevelopmentGuideTool = (kv: SimpleKV) =>
   tool({
     description:
       '查询权威发展建议，包括升级优先级、兵种搭配、防御策略、资源管理、部落战技巧、英雄升级规划等',
-    parameters: z.object({
+    inputSchema: z.object({
       topic: z
         .string()
         .describe(

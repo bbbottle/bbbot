@@ -1,5 +1,6 @@
-import { generateText } from 'ai';
+import { generateText, stepCountIs, type LanguageModel } from 'ai';
 import { createAnthropic } from '@ai-sdk/anthropic';
+import { createDeepSeek } from '@ai-sdk/deepseek';
 
 import {
   getPlayerInfoTool,
@@ -9,11 +10,7 @@ import {
 } from './tools';
 import type { SimpleKV } from './coc-wiki-importer';
 
-const createKimiClient = (apiKey: string) =>
-  createAnthropic({
-    baseURL: 'https://api.kimi.com/coding/v1/',
-    apiKey,
-  });
+export type AIProvider = 'kimi' | 'deepseek';
 
 const SYSTEM_PROMPT = `你是资深《部落冲突》(Clash of Clans) 游戏策略专家。
 
@@ -50,10 +47,32 @@ const SYSTEM_PROMPT = `你是资深《部落冲突》(Clash of Clans) 游戏策�
 `;
 
 export interface CocMasterConfig {
-  kimiApiKey: string;
+  provider: AIProvider;
+  kimiApiKey?: string;
+  deepseekApiKey?: string;
   cocToken: string;
   proxyKey: string;
   kv: SimpleKV;
+}
+
+function createModel(config: CocMasterConfig): LanguageModel {
+  switch (config.provider) {
+    case 'kimi': {
+      const kimi = createAnthropic({
+        baseURL: 'https://api.kimi.com/coding/v1/',
+        apiKey: config.kimiApiKey,
+      });
+      return kimi('kimi-for-coding');
+    }
+    case 'deepseek': {
+      const ds = createDeepSeek({
+        apiKey: config.deepseekApiKey,
+      });
+      return ds('deepseek-v4-pro');
+    }
+    default:
+      throw new Error(`Unknown AI provider: ${config.provider}`);
+  }
 }
 
 export async function askCocMaster(
@@ -66,11 +85,11 @@ export async function askCocMaster(
     system += `\n\n当前服务玩家标签: ${playerTag}`;
   }
 
-  const kimi = createKimiClient(config.kimiApiKey);
+  const model = createModel(config);
 
   try {
     const result = await generateText({
-      model: kimi('kimi-for-coding'),
+      model,
       system,
       messages: [{ role: 'user', content: question }],
       tools: {
@@ -79,25 +98,22 @@ export async function askCocMaster(
         getCurrentWar: getCurrentWarTool(config.cocToken, config.proxyKey),
         getDevelopmentGuide: getDevelopmentGuideTool(config.kv),
       },
-      maxSteps: 10,
+      stopWhen: stepCountIs(10),
     });
 
     return result.text;
   } catch (error) {
     const err = error as Error;
-    const isKimiError =
-      err.message?.includes('Forbidden') ||
-      err.message?.includes('Unauthorized') ||
-      err.message?.includes('fetch');
+    const providerLabel = config.provider === 'kimi' ? 'Kimi' : 'DeepSeek';
+    const apiKeyEnv = config.provider === 'kimi' ? 'KIMI_API_KEY' : 'DEEPSEEK_API_KEY';
     console.error(
       '[chat] generateText failed:',
       err.message,
       'cause:', (err as any).cause,
       'stack:', err.stack?.slice(0, 300)
     );
-    if (isKimiError) {
-      throw new Error(`Kimi API 调用失败: ${err.message}。请检查 KIMI_API_KEY 或确认 CF Worker 出口 IP 在 Kimi 白名单中。`);
-    }
-    throw err;
+    throw new Error(
+      `${providerLabel} API 调用失败: ${err.message}。请检查 ${apiKeyEnv} 配置。`
+    );
   }
 }

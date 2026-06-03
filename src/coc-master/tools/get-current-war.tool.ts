@@ -5,7 +5,7 @@ import { cocService } from '../coc-service';
 export const getCurrentWarTool = (token: string, proxyKey: string) =>
   tool({
     description: '获取部落当前战争信息',
-    parameters: z.object({
+    inputSchema: z.object({
       clanTag: z.string().describe('部落标签'),
     }),
     execute: async (args: { clanTag: string }) => {

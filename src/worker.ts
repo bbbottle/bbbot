@@ -1,4 +1,5 @@
-import { routeMessage } from "./campfire";
+import { routeMessage, isCocQuery } from "./campfire";
+import { cocMaster } from "./campfire/coc-master";
 import { type KVNamespace, setRuntimeBindings, setRuntimeEnv } from "./runtime";
 
 interface WorkerEnv {
@@ -7,12 +8,14 @@ interface WorkerEnv {
   API_CF_ENDPOINT: string;
   SESSION_KV: KVNamespace;
   KIMI_API_KEY: string;
+  DEEPSEEK_API_KEY: string;
+  COC_AI_PROVIDER?: string;
   COC_TOKEN: string;
   PROXY_KEY?: string;
 }
 
 export default {
-  async fetch(request: Request, env: WorkerEnv): Promise<Response> {
+  async fetch(request: Request, env: WorkerEnv, ctx: ExecutionContext): Promise<Response> {
     const { SESSION_KV, ...stringEnv } = env;
     setRuntimeEnv(stringEnv);
     setRuntimeBindings({ SESSION_KV });
@@ -23,6 +26,28 @@ export default {
     if (request.method === "POST" && url.pathname === "/campfire/message") {
       try {
         const payload = await request.json() as import("./campfire/types").CampfireMessage;
+        const plain = payload.message.body.plain.trim();
+
+        // COC queries: return loading immediately, process in background
+        if (isCocQuery(plain)) {
+          ctx.waitUntil((async () => {
+            try {
+              const result = await cocMaster(payload);
+              const replyUrl = `https://base.bbki.ng/rooms/${payload.room.id}/3-a6E7EFNFxxZv/messages`;
+              await fetch(replyUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ content: result }),
+              });
+            } catch (err) {
+              console.error("[coc] background processing failed:", err);
+            }
+          })());
+          return new Response("正在查询中...", {
+            headers: { "Content-Type": "text/html; charset=utf-8" },
+          });
+        }
+
         const response = await routeMessage(payload);
         return new Response(response, {
           headers: { "Content-Type": "text/html; charset=utf-8" },
