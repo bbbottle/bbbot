@@ -44,8 +44,12 @@ export const cocMaster: HandlerFn = async (payload) => {
 
   console.log(
     `[coc-master] query player=${playerTag} question=${question.slice(0, 50)} ` +
-    `kimi=${kimiApiKey.slice(0, 8)}... coc=${cocToken.slice(0, 20)}... proxy=${proxyKey.slice(0, 6)}...`
+    `kimi=${kimiApiKey!.slice(0, 8)}... coc=${cocToken!.slice(0, 20)}... proxy=${proxyKey!.slice(0, 6)}...`
   );
+
+  if (!kimiApiKey || !cocToken || !proxyKey) {
+    return `Configuration error: ${missing.join(', ')} is required.`;
+  }
 
   try {
     const response = await askCocMaster(playerTag, question, {
