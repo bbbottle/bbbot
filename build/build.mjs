@@ -11,7 +11,7 @@ await esbuild.build({
   bundle: true,
   treeShaking: true,
   target: 'node20',
-  external: ['fs', 'path', 'os', 'crypto', 'stream', 'http', 'https', 'url', 'util', 'zlib', 'dotenv'],
+  external: ['fs', 'path', 'os', 'crypto', 'stream', 'http', 'https', 'url', 'util', 'zlib'],
   define: {
     'process.env.APP_VERSION': JSON.stringify(pkg.version),
   },

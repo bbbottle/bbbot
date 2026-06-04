@@ -27,7 +27,7 @@ export const messageController = async (c: Context): Promise<Response> => {
           const postResp = await fetch(replyUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: result,
+            body: new URLSearchParams({ content: result }).toString(),
           });
           console.log(
             `[controller:coc] reply posted status=${postResp.status} ` +

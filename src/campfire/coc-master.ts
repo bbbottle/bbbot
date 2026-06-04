@@ -56,17 +56,10 @@ export const cocMaster: HandlerFn = async (payload) => {
       proxyKey,
       kv,
     });
-    return `<pre>${escapeHtml(response)}</pre>`;
+    return response;
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : 'Unknown error';
     console.error('[coc-master] error:', errMsg);
-    return `COC 查询失败: ${escapeHtml(errMsg)}`;
+    return `COC 查询失败: ${errMsg}`;
   }
 };
-
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
