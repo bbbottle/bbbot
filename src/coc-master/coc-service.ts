@@ -1,6 +1,6 @@
 import type { Clan, ClanWar, Player } from './types';
 
-const COC_API_BASE = 'http://47.106.33.249:3000/v1';
+const COC_API_BASE = 'http://100.96.0.5:3000/v1';
 
 function maskToken(token: string): string {
   if (!token) return '(empty)';
