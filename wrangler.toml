@@ -14,4 +14,3 @@ API_CF_ENDPOINT = "https://cf.bbki.ng"
 [observability.logs]
 enabled = false
 invocation_logs = true
-
