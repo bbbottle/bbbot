@@ -2,10 +2,12 @@
   "name": "bbbot",
   "version": "1.2.0",
   "description": "Campfire bot with COC Master AI integration",
-  "main": "src/worker.ts",
+  "type": "module",
+  "main": "src/index.ts",
   "scripts": {
-    "dev": "wrangler dev src/worker.ts",
-    "deploy": "wrangler deploy",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.cjs",
+    "build": "node build/build.mjs",
     "release": "node build/build.mjs"
   },
   "keywords": [],
@@ -14,12 +16,16 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.71",
     "@ai-sdk/deepseek": "^2.0.35",
+    "@hono/node-server": "^1.13.0",
     "ai": "^6.0.168",
+    "dotenv": "^16.4.0",
+    "hono": "^4.10.7",
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@types/node": "^20.0.0",
     "esbuild": "0.24.0",
-    "typescript": "^5.5.2",
-    "wrangler": "^3.84.0"
+    "tsx": "^4.0.0",
+    "typescript": "^5.5.2"
   }
 }

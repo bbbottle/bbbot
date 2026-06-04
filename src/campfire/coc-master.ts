@@ -1,17 +1,10 @@
 import { HandlerFn } from "./types";
-import { getEnv, getBindings } from "../runtime";
 import { askCocMaster, type AIProvider } from "../coc-master/chat";
 import { MemoryKV, type SimpleKV } from "../coc-master/coc-wiki-importer";
 
 const COC_TAG_PATTERN = /^#([A-Z0-9]{6,12})\s*(.*)$/i;
 
-function getKV(): SimpleKV {
-  const bindings = getBindings();
-  if (bindings.SESSION_KV) {
-    return bindings.SESSION_KV as unknown as SimpleKV;
-  }
-  return new MemoryKV();
-}
+const kv: SimpleKV = new MemoryKV();
 
 export function isCocQuery(text: string): boolean {
   return COC_TAG_PATTERN.test(text.trim());
@@ -28,12 +21,12 @@ export const cocMaster: HandlerFn = async (payload) => {
   const playerTag = `#${match[1].toUpperCase()}`;
   const question = match[2].trim() || '查看我的村庄信息';
 
-  // Gather config — all must come from env, no hardcoded fallbacks
-  const aiProvider: AIProvider = (getEnv('COC_AI_PROVIDER') as AIProvider) || 'kimi';
-  const kimiApiKey = getEnv('KIMI_API_KEY');
-  const deepseekApiKey = getEnv('DEEPSEEK_API_KEY');
-  const cocToken = getEnv('COC_TOKEN');
-  const proxyKey = getEnv('PROXY_KEY');
+  // Gather config from process.env
+  const aiProvider: AIProvider = (process.env.COC_AI_PROVIDER as AIProvider) || 'kimi';
+  const kimiApiKey = process.env.KIMI_API_KEY;
+  const deepseekApiKey = process.env.DEEPSEEK_API_KEY;
+  const cocToken = process.env.COC_TOKEN;
+  const proxyKey = process.env.PROXY_KEY;
 
   const missing: string[] = [];
   if (!cocToken) missing.push('COC_TOKEN');
@@ -42,7 +35,7 @@ export const cocMaster: HandlerFn = async (payload) => {
   if (aiProvider === 'deepseek' && !deepseekApiKey) missing.push('DEEPSEEK_API_KEY');
 
   if (missing.length > 0) {
-    return `缺少环境变量: ${missing.join(', ')}。请用 wrangler secret put 设置。`;
+    return `缺少环境变量: ${missing.join(', ')}。请在 .env 文件中设置。`;
   }
 
   console.log(
@@ -61,7 +54,7 @@ export const cocMaster: HandlerFn = async (payload) => {
       deepseekApiKey,
       cocToken,
       proxyKey,
-      kv: getKV(),
+      kv,
     });
     return `<pre>${escapeHtml(response)}</pre>`;
   } catch (error) {

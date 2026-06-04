@@ -7,13 +7,12 @@ on:
     paths:
       - 'src/**'
       - '.github/workflows/**'
-      - 'wrangler.toml'
       - 'package.json'
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    name: Deploy to Cloudflare Workers
+    name: Build and Deploy
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,9 +30,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Deploy to Cloudflare Workers
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy
+      - name: Build
+        run: pnpm build
+
+      # TODO: Add ECS deploy step for your environment
+      - name: Deploy
+        run: echo "Deploy step -- configure for your ECS environment"

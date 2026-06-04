@@ -1,12 +1,8 @@
 import { HandlerFn } from "./types";
-import { getEnv } from "../runtime";
 import { createPost, createStreamReq } from "../utils/api";
 
-// @ts-ignore JSON import
-import pkg from "../../package.json";
-
 function isAdmin(userId: number): boolean {
-  const ids = (getEnv("ADMIN_IDS") ?? "").split(",").map(Number);
+  const ids = (process.env.ADMIN_IDS ?? "").split(",").map(Number);
   return ids.includes(userId);
 }
 
@@ -38,7 +34,7 @@ export const avatar: HandlerFn = async () => {
 };
 
 export const version: HandlerFn = async () => {
-  return `bbbot v${(pkg as any).version} running on Campfire.`;
+  return `bbbot v${process.env.APP_VERSION || '0.0.0'} running on Campfire.`;
 };
 
 // --- Content handler ---

@@ -1,6 +1,8 @@
 import type { Clan, ClanWar, Player } from './types';
 
-const COC_API_BASE = 'http://100.96.0.5:3000/v1';
+function getCocApiBase(): string {
+  return process.env.COC_API_BASE || 'http://100.96.0.5:3000/v1';
+}
 
 function maskToken(token: string): string {
   if (!token) return '(empty)';
@@ -10,7 +12,8 @@ function maskToken(token: string): string {
 
 export class CocService {
   private async fetchCoc<T>(endpoint: string, token: string, proxyKey: string): Promise<T> {
-    const url = `${COC_API_BASE}${endpoint}`;
+    const base = getCocApiBase();
+    const url = `${base}${endpoint}`;
     const startTime = Date.now();
 
     console.log(
