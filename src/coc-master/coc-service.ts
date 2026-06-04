@@ -2,24 +2,62 @@ import type { Clan, ClanWar, Player } from './types';
 
 const COC_API_BASE = 'http://47.106.33.249:3000/v1';
 
+function maskToken(token: string): string {
+  if (!token) return '(empty)';
+  if (token.length <= 8) return token.slice(0, 2) + '***';
+  return token.slice(0, 4) + '***' + token.slice(-4);
+}
+
 export class CocService {
   private async fetchCoc<T>(endpoint: string, token: string, proxyKey: string): Promise<T> {
-    const response = await fetch(`${COC_API_BASE}${endpoint}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'X-Proxy-Key': proxyKey,
-        Accept: 'application/json',
-      },
-    });
+    const url = `${COC_API_BASE}${endpoint}`;
+    const startTime = Date.now();
+
+    console.log(
+      `[coc-api] -> ${url} ` +
+      `token=${maskToken(token)} proxyKey=${maskToken(proxyKey)}`
+    );
+
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'X-Proxy-Key': proxyKey,
+          Accept: 'application/json',
+        },
+      });
+    } catch (fetchErr) {
+      const ms = Date.now() - startTime;
+      console.error(`[coc-api] <- fetch threw after ${ms}ms:`, fetchErr);
+      throw fetchErr;
+    }
+
+    const ms = Date.now() - startTime;
+    const respHeaders: Record<string, string> = {};
+    response.headers.forEach((v, k) => { respHeaders[k] = v; });
 
     if (!response.ok) {
-      const errorText = await response.text().catch(() => 'Unknown error');
+      const errorBody = await response.text().catch(() => '(failed to read body)');
+      console.error(
+        `[coc-api] <- ${response.status} ${response.statusText} (${ms}ms)\n` +
+        `  url: ${url}\n` +
+        `  request: token=${maskToken(token)} proxyKey=${maskToken(proxyKey)}\n` +
+        `  response headers: ${JSON.stringify(respHeaders)}\n` +
+        `  response body: ${errorBody}`
+      );
       throw new Error(
-        `COC API ${response.status}: ${errorText} (proxy: ${COC_API_BASE}${endpoint})`
+        `COC API ${response.status}: ${errorBody.slice(0, 500)} (proxy: ${url})`
       );
     }
 
-    return response.json() as Promise<T>;
+    const body = await response.json() as T;
+    const bodyPreview = JSON.stringify(body).slice(0, 200);
+    console.log(
+      `[coc-api] <- ${response.status} (${ms}ms) body preview: ${bodyPreview}`
+    );
+
+    return body;
   }
 
   private normalizeTag(tag: string): string {

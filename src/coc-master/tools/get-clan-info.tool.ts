@@ -10,12 +10,14 @@ export const getClanInfoTool = (token: string, proxyKey: string) =>
     }),
     execute: async (args: { clanTag: string }) => {
       try {
+        console.log(`[tool:getClanInfo] fetching clanTag=${args.clanTag}`);
         const data = await cocService.getClan(args.clanTag, token, proxyKey);
+        console.log(`[tool:getClanInfo] success clanTag=${args.clanTag} name=${(data as any).name || '?'}`);
         return JSON.stringify(data);
       } catch (error: unknown) {
-        return JSON.stringify({
-          error: (error as Error).message || 'Failed to fetch clan info',
-        });
+        const msg = (error as Error).message || 'Failed to fetch clan info';
+        console.error(`[tool:getClanInfo] FAILED clanTag=${args.clanTag}:`, msg);
+        return JSON.stringify({ error: msg });
       }
     },
   });

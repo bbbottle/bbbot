@@ -17,12 +17,14 @@ export const getPlayerInfoTool = (defaultPlayerTag: string, token: string, proxy
         return JSON.stringify({ error: '缺少玩家标签' });
       }
       try {
+        console.log(`[tool:getPlayerInfo] fetching tag=${tag}`);
         const data = await cocService.getPlayer(tag, token, proxyKey);
+        console.log(`[tool:getPlayerInfo] success tag=${tag} name=${(data as any).name || '?'}`);
         return JSON.stringify(data);
       } catch (error: unknown) {
-        return JSON.stringify({
-          error: (error as Error).message || 'Failed to fetch player info',
-        });
+        const msg = (error as Error).message || 'Failed to fetch player info';
+        console.error(`[tool:getPlayerInfo] FAILED tag=${tag}:`, msg);
+        return JSON.stringify({ error: msg });
       }
     },
   });
