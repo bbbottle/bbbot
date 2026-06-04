@@ -26,10 +26,12 @@
     "ai": "^6.0.168",
     "dotenv": "^16.4.0",
     "hono": "^4.10.7",
+    "showdown": "^2.1.0",
     "zod": "^3.23.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "@types/showdown": "^2.0.6",
     "esbuild": "0.24.0",
     "tsx": "^4.0.0",
     "typescript": "^5.5.2"

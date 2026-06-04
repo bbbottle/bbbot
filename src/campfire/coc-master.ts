@@ -1,3 +1,4 @@
+import { Converter } from 'showdown';
 import { HandlerFn } from "./types";
 import { askCocMaster, type AIProvider } from "../coc-master/chat";
 import { MemoryKV, type SimpleKV } from "../coc-master/coc-wiki-importer";
@@ -5,6 +6,14 @@ import { MemoryKV, type SimpleKV } from "../coc-master/coc-wiki-importer";
 const COC_TAG_PATTERN = /^#([A-Z0-9]{6,12})\s*(.*)$/i;
 
 const kv: SimpleKV = new MemoryKV();
+const md = new Converter({
+  tables: true,
+  strikethrough: true,
+  tasklists: true,
+  ghCompatibleHeaderId: true,
+  simpleLineBreaks: true,
+  ghMentions: false,
+});
 
 export function isCocQuery(text: string): boolean {
   return COC_TAG_PATTERN.test(text.trim());
@@ -56,7 +65,7 @@ export const cocMaster: HandlerFn = async (payload) => {
       proxyKey,
       kv,
     });
-    return response;
+    return md.makeHtml(response);
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : 'Unknown error';
     console.error('[coc-master] error:', errMsg);
