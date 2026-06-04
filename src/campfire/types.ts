@@ -8,3 +8,4 @@ export interface CampfireMessage {
 }
 
 export type HandlerFn = (payload: CampfireMessage) => Promise<string>;
+export type MatchFn = (payload: CampfireMessage) => boolean;
