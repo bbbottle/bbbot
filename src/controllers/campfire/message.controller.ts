@@ -26,8 +26,9 @@ export const messageController = async (c: Context): Promise<Response> => {
           const replyUrl = `https://base.bbki.ng/rooms/${payload.room.id}/3-a6E7EFNFxxZv/messages`;
           const postResp = await fetch(replyUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ content: result }).toString(),
+            // headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/html; charset=utf-8' },
+            body: result,
           });
           console.log(
             `[controller:coc] reply posted status=${postResp.status} ` +
