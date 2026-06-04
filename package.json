@@ -8,7 +8,7 @@
     "dev": "tsx src/index.ts",
     "start": "node dist/index.cjs",
     "build": "node build/build.mjs",
-    "release": "node build/build.mjs && rsync -avz dist/ ali-ecs:bbot/",
+    "release": "node build/build.mjs && scp dist/index.cjs ali-ecs:bbot/dist/index.cjs",
     "deploy": "pnpm release && ssh ali-ecs 'cd ~/bbot && pm2 restart bbbot'",
     "pm2:start": "pm2 start ecosystem.config.cjs",
     "pm2:stop": "pm2 stop bbbot",
